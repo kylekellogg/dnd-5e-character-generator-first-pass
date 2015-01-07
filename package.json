@@ -5,6 +5,7 @@
   "main": "index.js",
   "devDependencies": {
     "cucumber": "^0.4.7",
+    "jshint": "^2.5.11",
     "zombie": "^2.5.1"
   },
   "dependencies": {
@@ -14,7 +15,10 @@
     "serve-static": "^1.7.2"
   },
   "scripts": {
-    "test": "cucumber.js ."
+    "setup": "npm install && ln -s ./node_modules/bower/bin/bower ./bower",
+    "test": "cucumber.js",
+    "lint": "jshint js/**.js",
+    "start": "NODE_ENV=development PORT=3000 HOST=localhost node index.js"
   },
   "repository": {
     "type": "git",
