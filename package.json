@@ -4,9 +4,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {
-    "cucumber": "^0.4.7"
+    "cucumber": "^0.4.7",
+    "zombie": "^2.5.1"
   },
   "dependencies": {
+    "bundler": "^0.8.0",
+    "serve-static": "^1.7.2"
   },
   "scripts": {
     "test": "test"
@@ -29,5 +32,6 @@
   "bugs": {
     "url": "https://github.com/sqow/dnd-5e-character-generator/issues"
   },
-  "homepage": "https://github.com/sqow/dnd-5e-character-generator"
+  "homepage": "https://github.com/sqow/dnd-5e-character-generator",
+  "private": true
 }
