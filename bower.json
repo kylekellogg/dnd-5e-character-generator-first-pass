@@ -1,0 +1,32 @@
+{
+  "name": "dnd-5e-character-generator",
+  "main": "index.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/sqow/dnd-5e-character-generator",
+  "authors": [
+    "Kyle Kellogg <kyle@kylekellogg.com>"
+  ],
+  "description": "D&D 5e character generator",
+  "moduleType": [
+    "amd",
+    "node"
+  ],
+  "keywords": [
+    "dungeons",
+    "dragons",
+    "character",
+    "generator"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.1"
+  }
+}
