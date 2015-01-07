@@ -5,5 +5,5 @@ Feature: Choose Race
 
   Scenario: A User is presented with Race options
     Given I am on the homepage
-    When I the page has loaded
+    When the page has loaded
     Then I should see "Choose a Race"
