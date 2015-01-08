@@ -6,4 +6,4 @@ Feature: Choose Race
   Scenario: A User is presented with Race options
     Given I am on the homepage
     When the page has loaded
-    Then I should see "Choose a Race"
+    Then the title should be "Choose a Race"
