@@ -3,20 +3,46 @@
   "description": "Character generator for Dungeons and Dragons 5e (fifth edition)",
   "version": "1.0.0",
   "main": "index.js",
+  "browser": {
+    "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.min.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "bootstrap": {
+      "depends": [
+        "jquery:jQuery"
+      ]
+    }
+  },
   "devDependencies": {
+    "browserify": "^8.0.3",
+    "browserify-shim": "^3.8.2",
     "cucumber": "^0.4.7",
     "jshint": "^2.5.11",
     "zombie": "^2.5.1"
   },
   "dependencies": {
-    "bower": "^1.3.12",
+    "bootstrap": "^3.3.1",
     "connect": "^3.3.3",
+    "jquery": "^2.1.3",
+    "page": "^1.5.0",
+    "handlebars": "^2.0.0",
     "serve-static": "^1.7.2"
   },
   "scripts": {
-    "setup": "npm install && ln -s ./node_modules/bower/bin/bower ./bower",
-    "test": "cucumber.js",
+    "setup": "npm install && bower install",
     "lint": "jshint js/**.js",
+    "pretest": "npm run lint",
+    "test": "cucumber.js",
+    "prepublish": "npm run lint",
+    "publish:templates": "handlebars templates/ -e tmpl -c handlebars --min -f js/templates.js",
+    "publish:js": "browserify js/main.js > js/bundle.js",
+    "publish:css": "cp -a ./node_modules/bootstrap/dist/css/ ./css/ && cp -a ./node_modules/bootstrap/dist/fonts/ ./fonts/",
+    "publish": "npm run publish:templates && npm run publish:js && npm run publish:css",
     "start": "NODE_ENV=development PORT=3000 HOST=localhost node index.js"
   },
   "repository": {
