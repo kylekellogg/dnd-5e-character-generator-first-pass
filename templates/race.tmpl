@@ -1,0 +1,189 @@
+{{!<main>}}
+{{#races}}
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <h2>{{name}}</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    {{#subraces}}
+      <div class="col-xs-4 col-sm-2 col-md-1 col-lg-1">
+        <input type="radio" name="race" id="{{{race-formatID}}}">
+      </div>
+      <div class="col-xs-8 col-sm-10 col-md-11 col-lg-11">
+        <label for="{{{race-formatID}}}">{{name}}</label>
+      </div>
+    {{/subraces}}
+    {{^subraces}}
+      <div class="col-xs-4 col-sm-2 col-md-1 col-lg-1">
+        <input type="radio" name="race" id="{{{race-formatID}}}">
+      </div>
+      <div class="col-xs-8 col-sm-10 col-md-11 col-lg-11">
+        <label for="{{{race-formatID}}}">{{name}}</label>
+      </div>
+    {{/subraces}}
+  </div>
+{{/races}}
+{{^races}}
+  <div class="row">
+    No races provided
+  </div>
+{{/races}}
+{{!</main>}}
+<!--
+  {
+    name: "Dwarf",
+    subraces: [
+      {
+        name: "Hill Dwarf",
+        traits: [
+          {
+            type: "ability_score_increase",
+            name: "wisdom",
+            value: 1,
+            per_level: false
+          },
+          {
+            type: "ability_score_increase",
+            name: "hp",
+            value: 1,
+            per_level: true
+          }
+        ],
+        features: [
+          {
+            name: "Dwarven Toughness",
+            value: "Your hit point maximum increases by 1, and it increases by 1 every time you gain a level."
+          }
+        ]
+      },
+      {
+        name: "Mountain Dwarf",
+        traits: [
+          {
+            type: "ability_score_increase",
+            name: "strength",
+            value: 2,
+            per_level: false
+          },
+          {
+            type: "skill",
+            name: "light armor",
+            proficient: true
+          },
+          {
+            type: "skill",
+            name: "medium armor",
+            proficient: true
+          }
+        ]
+      }
+    ],
+    traits: [
+      {
+        type: "ability_score_increase",
+        name: "constitution",
+        value: 2,
+        per_level: false
+      },
+      {
+        type: "appearance",
+        name: "age",
+        value: "Up to 350 years old"
+      },
+      {
+        type: "alignment",
+        name: "alignment",
+        value: "Lawful Good"
+      },
+      {
+        type: "appearance",
+        name: "size",
+        value: "Medium"
+      },
+      {
+        type: "appearance",
+        name: "height",
+        value: "4 to 5 feet tall"
+      },
+      {
+        type: "appearance",
+        name: "weight",
+        value: "About 150 pounds"
+      },
+      {
+        type: "speed",
+        name: "speed",
+        value: "25 feet"
+      },
+      {
+        type: "skill",
+        name: "battleaxe",
+        proficient: true
+      },
+      {
+        type: "skill",
+        name: "handaxe",
+        proficient: true
+      },
+      {
+        type: "skill",
+        name: "throwing hammer",
+        proficient: true
+      },
+      {
+        type: "skill",
+        name: "warhammer",
+        proficient: true
+      },
+      {
+        type: "choice",
+        name: "Tool Proficiency",
+        options: [
+          {
+            type: "skill",
+            name: "Smith's Tools",
+            proficient: true
+          },
+          {
+            type: "skill",
+            name: "Brewer's Supplies",
+            proficient: true
+          },
+          {
+            type: "skill",
+            name: "Mason's Tools",
+            proficient: true
+          }
+        ]
+      },
+      {
+        type: "language",
+        name: "Common"
+      },
+      {
+        type: "language",
+        name: "Dwarvish"
+      }
+    ],
+    features: [
+      {
+        name: "Speed",
+        value: "Your speed is not reduced by wearing heavy armor."
+      },
+      {
+        name: "Darkvision",
+        value: "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+      },
+      {
+        name: "Dwarven Resilience",
+        value: "You have advantage on saving throws against poison, and you have resistance against poison damage."
+      },
+      {
+        name: "Stonecunning",
+        value: "Wherever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus."
+      }
+    ]
+  }
+-->
