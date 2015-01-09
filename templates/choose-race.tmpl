@@ -1,0 +1,33 @@
+{{!<main>}}
+{{#races}}
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <h2>{{name}}</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    {{#subraces}}
+      <div class="col-xs-4 col-sm-2 col-md-1 col-lg-1">
+        <input type="radio" name="race" id="{{{choose-race-formatID}}}">
+      </div>
+      <div class="col-xs-8 col-sm-10 col-md-11 col-lg-11">
+        <label for="{{{choose-race-formatID}}}">{{name}}</label>
+      </div>
+    {{/subraces}}
+    {{^subraces}}
+      <div class="col-xs-4 col-sm-2 col-md-1 col-lg-1">
+        <input type="radio" name="race" id="{{{choose-race-formatID}}}">
+      </div>
+      <div class="col-xs-8 col-sm-10 col-md-11 col-lg-11">
+        <label for="{{{choose-race-formatID}}}">{{name}}</label>
+      </div>
+    {{/subraces}}
+  </div>
+{{/races}}
+{{^races}}
+  <div class="row">
+    No races provided
+  </div>
+{{/races}}
+{{!</main>}}
