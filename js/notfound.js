@@ -1,7 +1,10 @@
 module.exports = function(ctx, next) {
-  console.log( 'page not found' );
+  'use strict';
+  var $ = require( 'jquery' );
+
   ctx.handled = true;
   // ctx.save();
 
+  //  Page specific
   next();
 };
