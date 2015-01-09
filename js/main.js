@@ -13,8 +13,9 @@
   var Handlebars = require( 'handlebars' );
   var helpers = require( './template.helpers.js' )( Handlebars );
   var templates = require( './templates.js' );
+  var $document = $( document );
 
-  $( document ).ready( function onReady() {
+  $document.ready( function onReady() {
 
     var $main = $( 'main' );
 
@@ -29,6 +30,8 @@
             $main.html( template( data ) )
               .removeAttr( 'class' )
               .addClass( safePage );
+
+            document.title = data.title || 'Character Generator for D&D 5e';
           }
         )
         .done( function onDataDone() {
