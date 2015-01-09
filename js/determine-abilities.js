@@ -1,7 +1,10 @@
 module.exports = function(ctx, next) {
-  console.log( 'determine abilities page' );
+  'use strict';
+  var $ = require( 'jquery' );
+
   ctx.handled = true;
   // ctx.save();
-  
+
+  //  Page specific
   next();
 };
