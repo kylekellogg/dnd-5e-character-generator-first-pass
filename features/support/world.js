@@ -1,5 +1,7 @@
 var zombie = require('zombie');
 
+zombie.localhost( 'loc.al', '3000' );
+
 var WorldConstructor = function WorldConstructor(callback) {
   var browser = new zombie();
   var world = {
