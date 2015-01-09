@@ -9,17 +9,45 @@
   var abilities = require( './determine-abilities.js' );
   var describe = require( './describe-character.js' );
   var equipment = require( './choose-equipment.js' );
-  // var notfound = require( './notfound.js' );
+  var notfound = require( './notfound.js' );
+  var Handlebars = require( 'handlebars' );
+  var helpers = require( './template.helpers.js' )( Handlebars );
+  var templates = require( './templates.js' );
 
   $( document ).ready( function onReady() {
 
-    page( '/', index );
-    page( '/choose-race', race );
-    page( '/choose-class', clss );
-    page( '/determine-abilities', abilities );
-    page( '/describe-character', describe );
-    page( '/choose-equipment', equipment );
-    // page( '*', notfound );
+    var $main = $( 'main' );
+
+    function retrieveTemplate(ctx, next) {
+      var reqPage = ctx.pathname.substr(1),
+          safePage = reqPage === "" ? "index" : reqPage,
+          template = Handlebars.templates[safePage];
+      $.getJSON(
+          'data/' + safePage + '.json',
+          function onDataLoaded( data ) {
+            //  Apply template
+            $main.html( template( data ) )
+              .removeAttr( 'class' )
+              .addClass( safePage );
+          }
+        )
+        .done( function onDataDone() {
+          //  JSON done loading
+        } )
+        .fail( function onDataFail() {
+          //  JSON failed loading
+          $main.empty();
+        } )
+        .always( next );
+    }
+
+    page( '/', retrieveTemplate, index );
+    page( '/choose-race', retrieveTemplate, race );
+    page( '/choose-class', retrieveTemplate, clss );
+    page( '/determine-abilities', retrieveTemplate, abilities );
+    page( '/describe-character', retrieveTemplate, describe );
+    page( '/choose-equipment', retrieveTemplate, equipment );
+    page( '*', retrieveTemplate, notfound );
     page( {
       hashbang: true
     } );
