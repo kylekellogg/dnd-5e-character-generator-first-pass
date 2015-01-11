@@ -1,7 +1,7 @@
 {
   "name": "dnd-5e-character-generator",
   "description": "Character generator for Dungeons and Dragons 5e (fifth edition)",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "index.js",
   "browser": {
     "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.min.js"
@@ -35,7 +35,9 @@
     "serve-static": "^1.7.2"
   },
   "scripts": {
-    "setup": "npm install && bower install",
+    "presetup": "",
+    "setup": "npm install && node data/generate-choose-race.js > data/choose-race.json",
+    "postsetup": "",
     "lint": "jshint js/**.js",
     "pretest": "npm run lint",
     "test": "cucumber.js",
