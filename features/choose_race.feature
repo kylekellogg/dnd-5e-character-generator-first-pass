@@ -11,5 +11,5 @@ Feature: Choose Race
   Scenario: A User selects a Race to learn more
     Given I am on "/choose-race"
     When the page has loaded
-    And I have clicked "label" with text "Hill Dwarf"
-    Then I should see "Dwarven Toughness" in "#features"
+    And I have selected "Hill Dwarf"
+    Then I should see the feature "Dwarven Toughness"

@@ -34,16 +34,23 @@ module.exports = function chooseRaceSteps() {
     }
   } );
 
-  this.When(/^I have clicked "([^"]*)" with text "([^"]*)"$/, function ( el, text, callback) {
+  this.When(/^I have selected "([^"]*)"$/, function ( text, callback) {
     try {
       var win = this.browser.window;
       $(win);
-      var $el = win.$( el + ':contains(' + text + ')' );
+      var $el = win.$( 'option:contains(' + text + ')' ),
+          $select = $el.parent();
 
-      if ( $el.length > 0 ) {
+      if ( $el.length > 0 && $select.length > 0 ) {
         assert.equal( $el.text(), text );
-        $el.click();
-        callback();
+        win.$( 'option:selected' ).removeAttr( 'selected' );
+        $el.attr( 'selected', 'selected' );
+        $select.val( text );
+        $select.trigger( 'change' );
+        console.log( 'select val: ' + $select.val() );
+
+        setTimeout( callback, 5000 );
+        // callback();
       } else {
         callback.fail( 'Could not find an element (' + el + ') with text ' + text );
       }
@@ -52,20 +59,25 @@ module.exports = function chooseRaceSteps() {
     }
   });
 
-  this.Then(/^I should see "([^"]*)" in "([^"]*)"$/, function ( text, el, callback) {
+  this.Then(/^I should see the feature "([^"]*)"$/, function ( text, callback) {
     try {
       var win = this.browser.window;
       $(win);
-      var $el = win.$( el + ':contains(' + text + ')' );
+
+      win.$('select:first').trigger( 'change' );
+      console.log( 'feature-headers: ' + win.$('.feature-header').length );
+      console.log( 'selected option text: ' + win.$('option:selected').text() );
+      console.log( 'select val now: ' + win.$('select:first').val() );
+      var $el = win.$( '.feature-header:contains(' + text + ')' );
 
       if ( $el.length > 0 ) {
         assert.equal( $el.text(), text );
         callback();
       } else {
-        callback.fail( 'Could not find any elements to match ' + el );
+        callback.fail( 'Could not find any elements with text: ' + text );
       }
     } catch ( e ) {
-      callback.fail( 'Expected to find element ' + el + ' with text content ' + text );
+      callback.fail( 'Expected to find element with text: ' + text );
     }
   });
 };
