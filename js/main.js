@@ -13,6 +13,7 @@
   var Handlebars = require( 'handlebars' );
   var helpers = require( './template.helpers.js' )( Handlebars );
   var templates = require( './templates.js' );
+  var bootstrap = require( 'bootstrap' );
   var $document = $( document );
 
   $document.ready( function onReady() {
@@ -23,25 +24,27 @@
       var reqPage = ctx.pathname.substr(1),
           safePage = reqPage === "" ? "index" : reqPage,
           template = Handlebars.templates[safePage];
-      $.getJSON(
-          'data/' + safePage + '.json',
-          function onDataLoaded( data ) {
-            //  Apply template
-            $main.html( template( data ) )
-              .removeAttr( 'class' )
-              .addClass( safePage );
+      $.getJSON( 'data/' + safePage + '.json' )
+        .done( function onDataDone( data ) {
+          ctx.jsonData = data;
 
-            document.title = data.title || 'Character Generator for D&D 5e';
-          }
-        )
-        .done( function onDataDone() {
-          //  JSON done loading
+          //  Apply template
+          $main.html( template( data ) )
+            .removeAttr( 'class' )
+            .addClass( safePage );
+
+          document.title = data.title || 'Character Generator for D&D 5e';
+
+          $( document ).trigger( 'page.change' );
         } )
         .fail( function onDataFail() {
-          //  JSON failed loading
+          ctx.jsonData = {};
           $main.empty();
         } )
-        .always( next );
+        .always( function onDataAlways() {
+          ctx.save();
+          next();
+        } );
     }
 
     page( '/', retrieveTemplate, index );
