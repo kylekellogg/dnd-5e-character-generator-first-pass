@@ -1,33 +1,25 @@
 {{!<main>}}
-{{#races}}
-  <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-      <h2>{{name}}</h2>
-    </div>
+<div class="row">
+  <div class="col-xs-6">
+    <form>
+      <select name="race" id="race" class="form-control">
+        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">
+          {{#races}}
+            <optgroup label="{{name}}">
+              {{#subraces}}
+                <option value="{{name}}">{{name}}</option>
+              {{/subraces}}
+              {{^subraces}}
+                <option value="{{name}}">{{name}}</option>
+              {{/subraces}}
+            </optgroup>
+          {{/races}}
+        </ul>
+      </select>
+    </form>
   </div>
-
-  <div class="row">
-    {{#subraces}}
-      <div class="col-xs-4 col-sm-2 col-md-1 col-lg-1">
-        <input type="radio" name="race" id="{{{choose-race-formatID}}}">
-      </div>
-      <div class="col-xs-8 col-sm-10 col-md-11 col-lg-11">
-        <label for="{{{choose-race-formatID}}}">{{name}}</label>
-      </div>
-    {{/subraces}}
-    {{^subraces}}
-      <div class="col-xs-4 col-sm-2 col-md-1 col-lg-1">
-        <input type="radio" name="race" id="{{{choose-race-formatID}}}">
-      </div>
-      <div class="col-xs-8 col-sm-10 col-md-11 col-lg-11">
-        <label for="{{{choose-race-formatID}}}">{{name}}</label>
-      </div>
-    {{/subraces}}
+  <div class="col-xs-6" id="race-description">
   </div>
-{{/races}}
-{{^races}}
-  <div class="row">
-    No races provided
-  </div>
-{{/races}}
+</div>
 {{!</main>}}
