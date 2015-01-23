@@ -1,0 +1,25 @@
+{{!<main>}}
+<div class="row">
+  <div class="col-xs-6">
+    <form>
+      <select name="race" id="race" class="form-control">
+        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">
+          {{#races}}
+            <optgroup label="{{name}}">
+              {{#subraces}}
+                <option value="{{name}}">{{name}}</option>
+              {{/subraces}}
+              {{^subraces}}
+                <option value="{{name}}">{{name}}</option>
+              {{/subraces}}
+            </optgroup>
+          {{/races}}
+        </ul>
+      </select>
+    </form>
+  </div>
+  <div class="col-xs-6" id="race-description">
+  </div>
+</div>
+{{!</main>}}
