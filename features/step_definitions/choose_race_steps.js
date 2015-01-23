@@ -1,14 +1,14 @@
 module.exports = function chooseRaceSteps() {
   'use strict';
 
-  var assert = require( 'assert' );
-  var $ = require('jquery');
-
   this.World = require("../support/world.js").World;
 
-  this.Given( /^I am on "([^"]*)"$/, function( page, callback ) {
-    var base = 'http://loc.al/';
+  var $ = require('jquery');
+  var Race = require( '../../js/choose-race.js' );
+  var base = 'http://loc.al/';
+  var data = require( '../../data/choose-race.json' );
 
+  this.Given( /^I am on "([^"]*)"$/, function( page, callback ) {
     if ( page.length > 0 ) {
       this.visit( base + '#!' + page, callback );
     } else {
@@ -16,68 +16,93 @@ module.exports = function chooseRaceSteps() {
     }
   } );
 
-  this.When( /^the page has loaded$/, function( callback ) {
-    try {
-      this.browser.assert.success();
-      callback();
-    } catch ( e ) {
-      callback.fail( 'Expected page to load successfully' );
-    }
-  } );
-
   this.Then( /^the title should be "([^"]*)"$/, function( text, callback ) {
-    try {
-      assert.equal( this.browser.document.title, text );
+    if ( this.browser.document.title === text ) {
       callback();
-    } catch ( e ) {
+    } else {
       callback.fail( 'Expected to find ' + text + ' as <title> content, but found ' + this.browser.document.title + ' instead' );
     }
   } );
 
   this.When(/^I have selected "([^"]*)"$/, function ( text, callback) {
-    try {
-      var win = this.browser.window;
-      $(win);
-      var $el = win.$( 'option:contains(' + text + ')' ),
-          $select = $el.parent();
+    var win = this.browser.window; $(win);
+    var $el = win.$( 'option:contains(' + text + ')' ),
+        $select = $el.parents( 'select' );
 
-      if ( $el.length > 0 && $select.length > 0 ) {
-        assert.equal( $el.text(), text );
-        win.$( 'option:selected' ).removeAttr( 'selected' );
-        $el.attr( 'selected', 'selected' );
-        $select.val( text );
-        $select.trigger( 'change' );
-        console.log( 'select val: ' + $select.val() );
+    if ( $el.length > 0 && $select.length > 0 ) {
+      win.$( 'option:selected' ).removeAttr( 'selected' );
+      $el.attr( 'selected', 'selected' );
+      $select.val( text );
+      $select.trigger( 'change' );
 
-        setTimeout( callback, 5000 );
-        // callback();
-      } else {
-        callback.fail( 'Could not find an element (' + el + ') with text ' + text );
-      }
-    } catch ( e ) {
-      callback.fail( 'Expected to find element ' + el + ' with text content ' + text );
+      callback();
+    } else {
+      callback.fail( 'Could not find an element (' + el + ') with text ' + text );
     }
   });
 
-  this.Then(/^I should see the feature "([^"]*)"$/, function ( text, callback) {
-    try {
-      var win = this.browser.window;
-      $(win);
+  this.Then(/^I should have the following features: '(.*)'$/, function ( jsonStr, callback ) {
+    var win = this.browser.window; $(win);
+    var json = JSON.parse( jsonStr );
+    var doesNotMatch = false;
+    var features = [];
+    var race = new Race();
+    var i;
+    var l;
 
-      win.$('select:first').trigger( 'change' );
-      console.log( 'feature-headers: ' + win.$('.feature-header').length );
-      console.log( 'selected option text: ' + win.$('option:selected').text() );
-      console.log( 'select val now: ' + win.$('select:first').val() );
-      var $el = win.$( '.feature-header:contains(' + text + ')' );
+    function markNotProcessed( obj ) {
+      var cloneObj = obj;
+      cloneObj.processed = false;
+      return cloneObj;
+    }
 
-      if ( $el.length > 0 ) {
-        assert.equal( $el.text(), text );
-        callback();
-      } else {
-        callback.fail( 'Could not find any elements with text: ' + text );
+    for ( i = 0, l = json.length; i < l; i++ ) {
+      json[i] = markNotProcessed( json[i] );
+    }
+    
+    race.setup( data.races );
+    features = race.findFeaturesForRaceNamed( win.$( 'option:selected' ).val() );
+    
+    for ( i = 0, l = features.length; i < l; i++ ) {
+      features[i] = markNotProcessed( features[i] );
+    }
+
+    if ( json.length !== features.length ) {
+      callback.fail( 'Expected features and real features do not have the same number of items (' + json.length + ' vs ' + features.length + ')' );
+      return;
+    }
+
+    function findForName( arr, name ) {
+      var filtered = arr.filter( function(el) {
+        var hasSameName = el.hasOwnProperty('name') && el.name === name;
+        var hasNotProcessed = el.hasOwnProperty('processed') && !el.processed;
+        return hasSameName && hasNotProcessed;
+      } );
+
+      if ( filtered.length === 0 ) {
+        return arr[0] || {};
       }
-    } catch ( e ) {
-      callback.fail( 'Expected to find element with text: ' + text );
+
+      return filtered[0];
+    }
+
+    for ( i = 0, l = json.length; i < l; i++ ) {
+      var expected = json[i];
+      var feature = findForName( features, expected.name );
+
+      if ( expected.name !== feature.name || expected.value !== feature.value ) {
+        doesNotMatch = true;
+      } else {
+        expected.processed = true;
+        feature.processed = true;
+      }
+    }
+
+    if ( doesNotMatch ) {
+      callback.fail( 'Expected features and real features do not match' );
+    } else {
+      callback();
     }
   });
+
 };

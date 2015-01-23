@@ -1,42 +1,67 @@
-module.exports = function(ctx, next) {
+module.exports = function() {
   'use strict';
   var $ = require( 'jquery' ),
       Handlebars = require( 'handlebars' ),
+      data,
       featureTemplate,
       $race,
       $description;
 
-  ctx.handled = true;
-  // ctx.save();
+  this.setup = function setup( newData ) {
+    data = newData;
+  };
+
+  this.process = function process( ctx, next ) {
+    ctx.handled = true;
+
+    this.setup( ctx.jsponData.races );
+
+    $( document ).one( 'page.change.choose-race', function() {
+      featureTemplate = Handlebars.templates['choose-race-feature'];
+
+      $race = $( '#race' );
+      $description = $( '#race-description' );
+
+      $race.on( 'change', onRaceChanged );
+    } );
+
+    next();
+  };
+
+  this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
+
+  function findFeaturesForRaceNamed( name ) {
+    var matchesName = createMatchesName( name );
+    var matched_races = data
+      .filter( function( el ) {
+        var subrace_matches = el.subraces.filter( matchesName );
+        return matchesName( el ) || subrace_matches.length > 0;
+      } );
+    var race = matched_races[0] || {};
+    var featuresObj = compileFeatures( race, name );
+    return featuresObj.features || [];
+  }
+
+  function findRaceWithName( name ) {
+    var featuresObj = {};
+    featuresObj.features = findFeaturesForRaceNamed( name );
+
+    $description.html( featureTemplate( featuresObj ) );
+    return featuresObj.features.length > 0;
+  }
 
   function onRaceChanged() {
     updateRace( $race.val() );
   }
 
   function updateRace( val ) {
-    console.log( val );
-    findRaceWithName( val );
+    return findRaceWithName( val );
   }
 
   function createMatchesName( name ) {
     return function matchesName( el ) {
       return el.hasOwnProperty( 'name' ) && el.name === name;
     };
-  }
-
-  function findRaceWithName( name ) {
-    var matchesName = createMatchesName( name );
-    var matched_races = ctx.jsonData.races
-      .filter( function( el ) {
-        var subrace_matches = el.subraces.filter( matchesName );
-        console.log( 'testing', el, 'has subrace matches', subrace_matches );
-        return matchesName( el ) || subrace_matches.length > 0;
-      } );
-    var race = matched_races[0] || {};
-    console.log( race );
-    var featuresObj = compileFeatures( race, name );
-
-    $description.html( featureTemplate( featuresObj ) );
   }
 
   function compileFeatures( race, name ) {
@@ -57,14 +82,4 @@ module.exports = function(ctx, next) {
     return featuresObj;
   }
 
-  $( document ).one( 'page.change', function() {
-    featureTemplate = Handlebars.templates['choose-race-feature'];
-
-    $race = $( '#race' );
-    $description = $( '#race-description' );
-
-    $race.on( 'change', onRaceChanged );
-  } );
-
-  next();
 };

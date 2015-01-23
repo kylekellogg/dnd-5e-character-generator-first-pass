@@ -35,7 +35,7 @@
 
           document.title = data.title || 'Character Generator for D&D 5e';
 
-          $( document ).trigger( 'page.change' );
+          $( document ).trigger( 'page.change.' + safePage );
         } )
         .fail( function onDataFail() {
           ctx.jsonData = {};
@@ -48,7 +48,7 @@
     }
 
     page( '/', retrieveTemplate, index );
-    page( '/choose-race', retrieveTemplate, race );
+    page( '/choose-race', retrieveTemplate, race.process );
     page( '/choose-class', retrieveTemplate, clss );
     page( '/determine-abilities', retrieveTemplate, abilities );
     page( '/describe-character', retrieveTemplate, describe );
