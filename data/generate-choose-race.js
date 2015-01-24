@@ -190,10 +190,85 @@ var race_traits = {
     createTrait( TRAIT.LANGUAGE, 'common' ),
     createTrait( TRAIT.LANGUAGE, 'draconic' )
   ],
-  'Gnome': [],
-  'Half-Elf': [],
-  'Half-Orc': [],
-  'Tiefling': []
+  'Gnome': [
+    createTrait( TRAIT.ABILITY, ABILITY.INT, 2 ),
+    createTrait( TRAIT.APPEARANCE, 'age', 'Up to 500 years old' ),
+    createTrait( TRAIT.ALIGNMENT, 'alignment', 'Lawful Good or Chaotic Good' ),
+    createTrait( TRAIT.APPEARANCE, 'size', 'Small' ),
+    createTrait( TRAIT.APPEARANCE, 'height', '3 to 4 feet tall' ),
+    createTrait( TRAIT.APPEARANCE, 'weight', 'About 40 pounds' ),
+    createTrait( TRAIT.SPEED, 'speed', 25 ),
+    createTrait( TRAIT.LANGUAGE, 'common' ),
+    createTrait( TRAIT.LANGUAGE, 'gnomish' )
+  ],
+  'Half-Elf': [
+    createTrait( TRAIT.ABILITY, ABILITY.CHA, 2 ),
+    createTrait( TRAIT.CHOICE, 'second ability increase', [
+        createTrait( TRAIT.ABILITY, ABILITY.STR, 1 ),
+        createTrait( TRAIT.ABILITY, ABILITY.DEX, 1 ),
+        createTrait( TRAIT.ABILITY, ABILITY.CON, 1 ),
+        createTrait( TRAIT.ABILITY, ABILITY.WIS, 1 ),
+        createTrait( TRAIT.ABILITY, ABILITY.INT, 1 )
+      ]
+    ),
+    createTrait( TRAIT.CHOICE, 'third ability increase', [
+        createTrait( TRAIT.ABILITY, ABILITY.STR, 1 ),
+        createTrait( TRAIT.ABILITY, ABILITY.DEX, 1 ),
+        createTrait( TRAIT.ABILITY, ABILITY.CON, 1 ),
+        createTrait( TRAIT.ABILITY, ABILITY.WIS, 1 ),
+        createTrait( TRAIT.ABILITY, ABILITY.INT, 1 )
+      ]
+    ),
+    createTrait( TRAIT.APPEARANCE, 'age', 'Up to 180 years' ),
+    createTrait( TRAIT.ALIGNMENT, 'alignment', 'Chaotic Neutral' ),
+    createTrait( TRAIT.APPEARANCE, 'size', 'Medium' ),
+    createTrait( TRAIT.APPEARANCE, 'height', '5 to 6 feet tall' ),
+    createTrait( TRAIT.APPEARANCE, 'weight', '125 to 250 pounds' ),
+    createTrait( TRAIT.SPEED, 'speed', 30 ),
+    createTrait( TRAIT.LANGUAGE, 'common' ),
+    createTrait( TRAIT.LANGUAGE, 'elvish' ),
+    createTrait( TRAIT.CHOICE, 'third language', [
+        createTrait( TRAIT.LANGUAGE, 'dwarvish' ),
+        createTrait( TRAIT.LANGUAGE, 'giant' ),
+        createTrait( TRAIT.LANGUAGE, 'gnomish' ),
+        createTrait( TRAIT.LANGUAGE, 'goblin' ),
+        createTrait( TRAIT.LANGUAGE, 'halfling' ),
+        createTrait( TRAIT.LANGUAGE, 'orc' ),
+        createTrait( TRAIT.LANGUAGE, 'abyssal' ),
+        createTrait( TRAIT.LANGUAGE, 'celestial' ),
+        createTrait( TRAIT.LANGUAGE, 'draconic' ),
+        createTrait( TRAIT.LANGUAGE, 'deep speech' ),
+        createTrait( TRAIT.LANGUAGE, 'infernal' ),
+        createTrait( TRAIT.LANGUAGE, 'primordial' ),
+        createTrait( TRAIT.LANGUAGE, 'sylvan' ),
+        createTrait( TRAIT.LANGUAGE, 'undercommon' )
+      ]
+    )
+  ],
+  'Half-Orc': [
+    createTrait( TRAIT.ABILITY, ABILITY.STR, 2 ),
+    createTrait( TRAIT.ABILITY, ABILITY.CON, 1 ),
+    createTrait( TRAIT.APPEARANCE, 'age', 'Up to 75 years' ),
+    createTrait( TRAIT.ALIGNMENT, 'alignment', 'Chaotic Good' ),
+    createTrait( TRAIT.APPEARANCE, 'size', 'Medium' ),
+    createTrait( TRAIT.APPEARANCE, 'height', '5 to over 6 feet tall' ),
+    createTrait( TRAIT.APPEARANCE, 'weight', '125 to 250 pounds' ),
+    createTrait( TRAIT.SPEED, 'speed', 30 ),
+    createTrait( TRAIT.LANGUAGE, 'common' ),
+    createTrait( TRAIT.LANGUAGE, 'orc' )
+  ],
+  'Tiefling': [
+    createTrait( TRAIT.ABILITY, ABILITY.INT, 1 ),
+    createTrait( TRAIT.ABILITY, ABILITY.CHA, 2 ),
+    createTrait( TRAIT.APPEARANCE, 'age', 'Less than 100 years old' ),
+    createTrait( TRAIT.ALIGNMENT, 'alignment', 'Chaotic Neutral or Chaotic Evil' ),
+    createTrait( TRAIT.APPEARANCE, 'size', 'Medium' ),
+    createTrait( TRAIT.APPEARANCE, 'height', 'About 5 to over 6 feet tall' ),
+    createTrait( TRAIT.APPEARANCE, 'weight', '125 to 250 pounds' ),
+    createTrait( TRAIT.SPEED, 'speed', 30 ),
+    createTrait( TRAIT.LANGUAGE, 'common' ),
+    createTrait( TRAIT.LANGUAGE, 'infernal' )
+  ]
 };
 
 var race_features = {
@@ -219,10 +294,26 @@ var race_features = {
     createFeature( 'Breath Weapon', 'You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape, and damage type of the exhalation. When you use your breath weapon, each creature in the area of the exhalation must make a saving throw, the type of which is determined by your draconic ancestry. The DC for this saving throw equals 8 + your Constitution modifier + your proficiency bonus. A creature takes 2d6 damage on a failed save, and half as much damage on a successful one. The damage increases to 3d6 at 6th level, 4d6 at 11th level, and 5d6 at 16th level. After you use your breath weapon, you can\'t use it again until you complete a short or long rest.' ),
     createFeature( 'Damage Resistance', 'You have resistance to the damage type associated with your draconic ancestry.' )
   ],
-  'Gnome': [],
-  'Half-Elf': [],
-  'Half-Orc': [],
-  'Tiefling': []
+  'Gnome': [
+    createFeature( 'Darkvision', 'You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can\'t discern color in darkness, only shades of gray.' ),
+    createFeature( 'Gnome Cunning', 'You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.' )
+  ],
+  'Half-Elf': [
+    createFeature( 'Darkvision', 'You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can\'t discern color in darkness, only shades of gray.' ),
+    createFeature( 'Fey Ancestry', 'You have advantage on saving throws against being charmed, and magic can\'t put you to sleep.' ),
+    createFeature( 'Skill Versatility', 'You gain proficiency in two skills of your choice.' )
+  ],
+  'Half-Orc': [
+    createFeature( 'Darkvision', 'You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can\'t discern color in darkness, only shades of gray.' ),
+    createFeature( 'Menacing', 'You gain proficiency in the Intimidation skill.' ),
+    createFeature( 'Relentless Endurance', 'When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. You can\'t use this feature again until you finish a long rest.' ),
+    createFeature( 'Savage Attacks', 'When you score a critical hit with a melee weapon attack, you can roll one of the weapons damage dice one additional time and add it to the extra damage of the critical hit.' )
+  ],
+  'Tiefling': [
+    createFeature( 'Darkvision', 'You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can\'t discern color in darkness, only shades of gray.' ),
+    createFeature( 'Hellish Resistance', 'You have resistance to fire damage.' ),
+    createFeature( 'Infernal Legacy', 'You know the "thaumaturgy" cantrip. Once you reach 3rd level, you can cast the "hellish rebuke" spell once per day as a 2nd-level spell. ONce you reach 5th level, you can also cast the "darkness" spell once per day. Charisma is your spellcasting ability for these spells.' )
+  ]
 };
 
 var subrace_traits = {
@@ -298,8 +389,12 @@ var subrace_traits = {
   'Red': [],
   'Silver': [],
   'White': [],
-  'Forest Gnome': [],
-  'Rock Gnome': []
+  'Forest Gnome': [
+    createTrait( TRAIT.ABILITY, ABILITY.DEX, 1 )
+  ],
+  'Rock Gnome': [
+    createTrait( TRAIT.ABILITY, ABILITY.CON, 1 )
+  ]
 }
 
 var subrace_features = {
@@ -373,8 +468,14 @@ var subrace_features = {
     createFeature( 'Your Draconic Ancestry Breath Weapon', '15 ft. cone (Con. save)' ),
     createFeature( 'Your Draconic Ancestry Damage Resistance', 'Cold' )
   ],
-  'Forest Gnome': [],
-  'Rock Gnome': []
+  'Forest Gnome': [
+    createFeature( 'Natural Illusionist', 'You know the "minor illusion" cantrip. Intelligence is your spellcasting ability for it.' ),
+    createFeature( 'Speak with Small Beasts', 'Through sounds and gestures, you can communicate simple ideas with Small or smaller beasts. Forest gnomes love animals and often keep squirrels, badgers, rabbits, moles, woodpeckers, and other creatures as beloved pets.' )
+  ],
+  'Rock Gnome': [
+    createFeature( 'Artificer\'s Lore', 'Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply.' ),
+    createFeature( 'Tinker', 'You have proficiency with artisan\'s tools (tinker\'s tools). Using those tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device (AC 5, 1 hp). The device ceases to function after 24 hours (unless you spend 1 hour repairing it to keep the device functioning), or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it. You can have up to three such devices active at a time. When you create a device, choose one of the following options: "Clockwork Toy" - This toy is a clockwork animal, monster, or person, such as a frog, mouse, bird, dragon, or soldier. When placed on the ground, the toy moves 5 feet across the ground on each of your turns in a random direction. It makes noises as appropriate to the creature it represents. "Fire Starter" - The device produces a miniature flame, which you can use to light a candle, torch, or campfire. Using the device requires your action. "Music Box" - When opened, this music box plays a single song at a moderate volume. The box stops playing when it reaches the song\'s end or when it is closed.' )
+  ]
 }
 
 function createDoc() {
