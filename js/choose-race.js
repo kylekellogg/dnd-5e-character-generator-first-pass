@@ -47,15 +47,40 @@ module.exports = function chooseRace() {
     var featuresObj = {};
     var features = race.features;
 
+    function indexOfFeature( arr, feature ) {
+      var contains = -1;
+      var item;
+
+      for ( var i = 0, l = arr.length; i < l; i++ ) {
+        item = arr[i];
+
+        if ( item.hasOwnProperty('name') && item.name === feature.name ) {
+          contains = i;
+          break;
+        }
+      }
+
+      return contains;
+    }
+
     race.subraces.forEach( function( item ) {
       if ( matchesName( item ) ) {
         features = features.concat( item.features );
       }
     } );
 
-    //  Limit to unique keys
+    //  Limit to unique features, with later ones overriding earlier matches (based on name)
+    var goodFeatures = [];
+    features.forEach( function( item ) {
+      var idx = indexOfFeature( goodFeatures, item );
+      if ( idx > -1 ) {
+        goodFeatures[idx] = item;
+      } else {
+        goodFeatures.push( item );
+      }
+    } );
 
-    featuresObj.features = features || [];
+    featuresObj.features = goodFeatures || [];
 
     return featuresObj;
   }
@@ -71,6 +96,7 @@ module.exports = function chooseRace() {
 
     self.setup( ctx.jsonData.races );
 
+    //  The following is only needed if using a * path for page.js
     // $( document ).one( 'page.change.choose-race', function() {
       featureTemplate = Handlebars.templates['choose-race-feature'];
 
