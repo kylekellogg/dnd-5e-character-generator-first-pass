@@ -4,16 +4,19 @@
   var $ = require( 'jquery' );
   var page = require( 'page' );
   var index = require( './index.js' );
-  var race = require( './choose-race.js' );
+  var ChooseRace = require( './choose-race.js' );
   var clss = require( './choose-class.js' );
   var abilities = require( './determine-abilities.js' );
   var describe = require( './describe-character.js' );
   var equipment = require( './choose-equipment.js' );
-  var notfound = require( './notfound.js' );
+  // var notfound = require( './notfound.js' );
   var Handlebars = require( 'handlebars' );
   var helpers = require( './template.helpers.js' )( Handlebars );
   var templates = require( './templates.js' );
   var bootstrap = require( 'bootstrap' );
+
+  var race = new ChooseRace();
+
   var $document = $( document );
 
   $document.ready( function onReady() {
@@ -35,7 +38,7 @@
 
           document.title = data.title || 'Character Generator for D&D 5e';
 
-          $( document ).trigger( 'page.change.' + safePage );
+          $document.trigger( 'page.change.' + safePage );
         } )
         .fail( function onDataFail() {
           ctx.jsonData = {};
@@ -53,7 +56,7 @@
     page( '/determine-abilities', retrieveTemplate, abilities );
     page( '/describe-character', retrieveTemplate, describe );
     page( '/choose-equipment', retrieveTemplate, equipment );
-    page( '*', retrieveTemplate, notfound );
+    // page( '*', retrieveTemplate, notfound );
     page( {
       hashbang: true
     } );

@@ -4,8 +4,8 @@ module.exports = function chooseRaceSteps() {
   this.World = require("../support/world.js").World;
 
   var $ = require('jquery');
-  var Race = require( '../../js/choose-race.js' );
-  var base = 'http://loc.al/';
+  var ChooseRace = require( '../../js/choose-race.js' );
+  var base = 'http://localhost:3000/';
   var data = require( '../../data/choose-race.json' );
 
   this.Given( /^I am on "([^"]*)"$/, function( page, callback ) {
@@ -46,7 +46,7 @@ module.exports = function chooseRaceSteps() {
     var json = JSON.parse( jsonStr );
     var doesNotMatch = false;
     var features = [];
-    var race = new Race();
+    var race = new ChooseRace();
     var i;
     var l;
 

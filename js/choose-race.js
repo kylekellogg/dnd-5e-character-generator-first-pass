@@ -1,34 +1,12 @@
-module.exports = function() {
+module.exports = function chooseRace() {
   'use strict';
   var $ = require( 'jquery' ),
       Handlebars = require( 'handlebars' ),
+      self = this,
       data,
       featureTemplate,
       $race,
       $description;
-
-  this.setup = function setup( newData ) {
-    data = newData;
-  };
-
-  this.process = function process( ctx, next ) {
-    ctx.handled = true;
-
-    this.setup( ctx.jsponData.races );
-
-    $( document ).one( 'page.change.choose-race', function() {
-      featureTemplate = Handlebars.templates['choose-race-feature'];
-
-      $race = $( '#race' );
-      $description = $( '#race-description' );
-
-      $race.on( 'change', onRaceChanged );
-    } );
-
-    next();
-  };
-
-  this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
 
   function findFeaturesForRaceNamed( name ) {
     var matchesName = createMatchesName( name );
@@ -81,5 +59,28 @@ module.exports = function() {
 
     return featuresObj;
   }
+
+  this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
+
+  this.setup = function setup( newData ) {
+    data = newData;
+  };
+
+  this.process = function process( ctx, next ) {
+    ctx.handled = true;
+
+    self.setup( ctx.jsonData.races );
+
+    // $( document ).one( 'page.change.choose-race', function() {
+      featureTemplate = Handlebars.templates['choose-race-feature'];
+
+      $race = $( '#race' );
+      $description = $( '#race-description' );
+
+      $race.on( 'change', onRaceChanged );
+    // } );
+
+    next();
+  };
 
 };
