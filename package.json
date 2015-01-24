@@ -35,7 +35,8 @@
   },
   "scripts": {
     "presetup": "",
-    "setup": "npm install && node data/generate-choose-race.js > data/choose-race.json",
+    "setup:choose-race": "node data/generate-choose-race.js > data/choose-race.json",
+    "setup": "npm install && npm run setup:choose-race",
     "postsetup": "",
     "lint": "jshint js/**.js",
     "pretest": "npm run lint",

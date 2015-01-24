@@ -156,7 +156,7 @@ var race_traits = {
     createTrait( TRAIT.APPEARANCE, 'age', 'Less than 100 years old' ),
     createTrait( TRAIT.APPEARANCE, 'size', 'Medium' ),
     createTrait( TRAIT.APPEARANCE, 'height', 'About 5 to over 6 feet tall' ),
-    createTrait( TRAIT.APPEARANCE, 'weight', '125 to 250 pounds' )
+    createTrait( TRAIT.APPEARANCE, 'weight', '125 to 250 pounds' ),
     createTrait( TRAIT.SPEED, 'speed', 30 ),
     createTrait( TRAIT.LANGUAGE, 'common' ),
     createTrait( TRAIT.CHOICE, 'second language', [
@@ -188,60 +188,7 @@ var race_traits = {
     createTrait( TRAIT.APPEARANCE, 'weight', 'About 250 pounds' ),
     createTrait( TRAIT.SPEED, 'speed', 30 ),
     createTrait( TRAIT.LANGUAGE, 'common' ),
-    createTrait( TRAIT.LANGUAGE, 'draconic' ),
-    createTrait( TRAIT.CHOICE, 'Draconic Ancestry', [
-        createTrait( TRAIT.GROUPED, 'Black', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'acid' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
-          ]
-        ),
-        createTrait( TRAIT.GROUPED, 'Blue', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'lightning' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
-          ]
-        ),
-        createTrait( TRAIT.GROUPED, 'Brass', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'fire' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
-          ]
-        ),
-        createTrait( TRAIT.GROUPED, 'Bronze', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'lightning' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
-          ]
-        ),
-        createTrait( TRAIT.GROUPED, 'Copper', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'acid' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
-          ]
-        ),
-        createTrait( TRAIT.GROUPED, 'Gold', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'fire' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Dex. save)' )
-          ]
-        ),
-        createTrait( TRAIT.GROUPED, 'Green', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'poison' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Con. save)' )
-          ]
-        ),
-        createTrait( TRAIT.GROUPED, 'Red', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'fire' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Dex. save)' )
-          ]
-        ),
-        createTrait( TRAIT.GROUPED, 'Silver', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'cold' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Con. save)' )
-          ]
-        ),
-        createTrait( TRAIT.GROUPED, 'White', [
-            createTrait( TRAIT.SKILL, 'damage resistance', 'cold' ),
-            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Con. save)' )
-          ]
-        )
-      ]
-    )
+    createTrait( TRAIT.LANGUAGE, 'draconic' )
   ],
   'Gnome': [],
   'Half-Elf': [],
@@ -386,16 +333,46 @@ var subrace_features = {
   'Shou': [],
   'Tethyrian': [],
   'Turami': [],
-  'Black': [],
-  'Blue': [],
-  'Brass': [],
-  'Bronze': [],
-  'Copper': [],
-  'Gold': [],
-  'Green': [],
-  'Red': [],
-  'Silver': [],
-  'White': [],
+  'Black': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '5 by 30 ft. line (Dex. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Acid' )
+  ],
+  'Blue': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '5 by 30 ft. line (Dex. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Lightning' )
+  ],
+  'Brass': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '5 by 30 ft. line (Dex. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Fire' )
+  ],
+  'Bronze': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '5 by 30 ft. line (Dex. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Lightning' )
+  ],
+  'Copper': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '5 by 30 ft. line (Dex. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Acid' )
+  ],
+  'Gold': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '15 ft. cone (Dex. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Fire' )
+  ],
+  'Green': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '15 ft. cone (Con. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Poison' )
+  ],
+  'Red': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '15 ft. cone (Dex. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Fire' )
+  ],
+  'Silver': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '15 ft. cone (Con. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Cold' )
+  ],
+  'White': [
+    createFeature( 'Your Draconic Ancestry Breath Weapon', '15 ft. cone (Con. save)' ),
+    createFeature( 'Your Draconic Ancestry Damage Resistance', 'Cold' )
+  ],
   'Forest Gnome': [],
   'Rock Gnome': []
 }
