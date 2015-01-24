@@ -5,7 +5,8 @@ var TRAIT = {
   ALIGNMENT: 'alignment',
   SPEED: 'speed',
   CHOICE: 'choice',
-  LANGUAGE: 'language'
+  LANGUAGE: 'language',
+  GROUPED: 'grouped'
 };
 
 var ABILITY = {
@@ -134,9 +135,114 @@ var race_traits = {
     createTrait( TRAIT.LANGUAGE, 'common' ),
     createTrait( TRAIT.LANGUAGE, 'elvish' )
   ],
-  'Halfling': [],
-  'Human': [],
-  'Dragonborn': [],
+  'Halfling': [
+    createTrait( TRAIT.ABILITY, ABILITY.DEX, 2 ),
+    createTrait( TRAIT.APPEARANCE, 'age', 'Up to 250 years old' ),
+    createTrait( TRAIT.ALIGNMENT, 'alignment', 'Lawful Good' ),
+    createTrait( TRAIT.APPEARANCE, 'size', 'Small' ),
+    createTrait( TRAIT.APPEARANCE, 'height', 'About 3 feet tall' ),
+    createTrait( TRAIT.APPEARANCE, 'weight', 'About 40 pounds' ),
+    createTrait( TRAIT.SPEED, 'speed', 25 ),
+    createTrait( TRAIT.LANGUAGE, 'common' ),
+    createTrait( TRAIT.LANGUAGE, 'halfling' )
+  ],
+  'Human': [
+    createTrait( TRAIT.ABILITY, ABILITY.STR, 1 ),
+    createTrait( TRAIT.ABILITY, ABILITY.DEX, 1 ),
+    createTrait( TRAIT.ABILITY, ABILITY.CON, 1 ),
+    createTrait( TRAIT.ABILITY, ABILITY.INT, 1 ),
+    createTrait( TRAIT.ABILITY, ABILITY.WIS, 1 ),
+    createTrait( TRAIT.ABILITY, ABILITY.CHA, 1 ),
+    createTrait( TRAIT.APPEARANCE, 'age', 'Less than 100 years old' ),
+    createTrait( TRAIT.APPEARANCE, 'size', 'Medium' ),
+    createTrait( TRAIT.APPEARANCE, 'height', 'About 5 to over 6 feet tall' ),
+    createTrait( TRAIT.APPEARANCE, 'weight', '125 to 250 pounds' )
+    createTrait( TRAIT.SPEED, 'speed', 30 ),
+    createTrait( TRAIT.LANGUAGE, 'common' ),
+    createTrait( TRAIT.CHOICE, 'second language', [
+        createTrait( TRAIT.LANGUAGE, 'dwarvish' ),
+        createTrait( TRAIT.LANGUAGE, 'elvish' ),
+        createTrait( TRAIT.LANGUAGE, 'giant' ),
+        createTrait( TRAIT.LANGUAGE, 'gnomish' ),
+        createTrait( TRAIT.LANGUAGE, 'goblin' ),
+        createTrait( TRAIT.LANGUAGE, 'halfling' ),
+        createTrait( TRAIT.LANGUAGE, 'orc' ),
+        createTrait( TRAIT.LANGUAGE, 'abyssal' ),
+        createTrait( TRAIT.LANGUAGE, 'celestial' ),
+        createTrait( TRAIT.LANGUAGE, 'draconic' ),
+        createTrait( TRAIT.LANGUAGE, 'deep speech' ),
+        createTrait( TRAIT.LANGUAGE, 'infernal' ),
+        createTrait( TRAIT.LANGUAGE, 'primordial' ),
+        createTrait( TRAIT.LANGUAGE, 'sylvan' ),
+        createTrait( TRAIT.LANGUAGE, 'undercommon' )
+      ]
+    )
+  ],
+  'Dragonborn': [
+    createTrait( TRAIT.ABILITY, ABILITY.STR, 2 ),
+    createTrait( TRAIT.ABILITY, ABILITY.CHA, 1 ),
+    createTrait( TRAIT.APPEARANCE, 'age', 'Up to 80 years old' ),
+    createTrait( TRAIT.ALIGNMENT, 'alignment', 'Neutral Good or Neutral Evil' ),
+    createTrait( TRAIT.APPEARANCE, 'size', 'Medium' ),
+    createTrait( TRAIT.APPEARANCE, 'height', 'Over 6 feet tall' ),
+    createTrait( TRAIT.APPEARANCE, 'weight', 'About 250 pounds' ),
+    createTrait( TRAIT.SPEED, 'speed', 30 ),
+    createTrait( TRAIT.LANGUAGE, 'common' ),
+    createTrait( TRAIT.LANGUAGE, 'draconic' ),
+    createTrait( TRAIT.CHOICE, 'Draconic Ancestry', [
+        createTrait( TRAIT.GROUPED, 'Black', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'acid' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
+          ]
+        ),
+        createTrait( TRAIT.GROUPED, 'Blue', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'lightning' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
+          ]
+        ),
+        createTrait( TRAIT.GROUPED, 'Brass', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'fire' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
+          ]
+        ),
+        createTrait( TRAIT.GROUPED, 'Bronze', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'lightning' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
+          ]
+        ),
+        createTrait( TRAIT.GROUPED, 'Copper', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'acid' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '5 by 30 ft. line (Dex. save)' )
+          ]
+        ),
+        createTrait( TRAIT.GROUPED, 'Gold', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'fire' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Dex. save)' )
+          ]
+        ),
+        createTrait( TRAIT.GROUPED, 'Green', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'poison' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Con. save)' )
+          ]
+        ),
+        createTrait( TRAIT.GROUPED, 'Red', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'fire' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Dex. save)' )
+          ]
+        ),
+        createTrait( TRAIT.GROUPED, 'Silver', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'cold' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Con. save)' )
+          ]
+        ),
+        createTrait( TRAIT.GROUPED, 'White', [
+            createTrait( TRAIT.SKILL, 'damage resistance', 'cold' ),
+            createTrait( TRAIT.SKILL, 'breath weapon', '15 ft. cone (Con. save)' )
+          ]
+        )
+      ]
+    )
+  ],
   'Gnome': [],
   'Half-Elf': [],
   'Half-Orc': [],
@@ -156,9 +262,16 @@ var race_features = {
     createFeature( 'Fey Ancestry', 'You have advantage on saving throws against being charmed, and magic can\'t put you to sleep.' ),
     createFeature( 'Trance', 'Elves don\'t need to sleep. Instead, they meditate deeply, remaining semiconscious, for 4 hours a day. (The Common word for such meditation is "trance.") While meditating, you can dream after a fashion; such dreams are actually mental exercises that have become reflexive through years of practice. After resting in this way, you gain the same benefit that a human does from 8 hours of sleep.' )
   ],
-  'Halfling': [],
+  'Halfling': [
+  createFeature( 'Lucky', 'When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.' ),
+  createFeature( 'Brave', 'You have advantage on saving throws against being frightened.' ),
+  createFeature( 'Halfling Nimbleness', 'You can move through the space of any creature that is of a size larger than yours.' )
+  ],
   'Human': [],
-  'Dragonborn': [],
+  'Dragonborn': [
+    createFeature( 'Breath Weapon', 'You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape, and damage type of the exhalation. When you use your breath weapon, each creature in the area of the exhalation must make a saving throw, the type of which is determined by your draconic ancestry. The DC for this saving throw equals 8 + your Constitution modifier + your proficiency bonus. A creature takes 2d6 damage on a failed save, and half as much damage on a successful one. The damage increases to 3d6 at 6th level, 4d6 at 11th level, and 5d6 at 16th level. After you use your breath weapon, you can\'t use it again until you complete a short or long rest.' ),
+    createFeature( 'Damage Resistance', 'You have resistance to the damage type associated with your draconic ancestry.' )
+  ],
   'Gnome': [],
   'Half-Elf': [],
   'Half-Orc': [],
@@ -213,8 +326,12 @@ var subrace_traits = {
     createTrait( TRAIT.SKILL, 'shortsword', undefined, undefined, true ),
     createTrait( TRAIT.SKILL, 'hand crossbow', undefined, undefined, true )
   ],
-  'Lightfoot': [],
-  'Stout': [],
+  'Lightfoot': [
+    createTrait( TRAIT.ABILITY, ABILITY.CHA, 1 )
+  ],
+  'Stout': [
+    createTrait( TRAIT.ABILITY, ABILITY.CON, 1 )
+  ],
   'Calashite': [],
   'Chondathan': [],
   'Damaran': [],
@@ -254,8 +371,12 @@ var subrace_features = {
     createFeature( 'Sunlight Sensitivity', 'You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in the direct sunlight.' ),
     createFeature( 'Drow Magic', 'You know the "dancing lights" cantrip. When you reach 3rd level, you can cast the "faerie fire" spell once per day. When you reach 5th level, you can also cast the "darkness" spell once per day. Charisma is your spellcasting ability for these spells.' )
   ],
-  'Lightfoot': [],
-  'Stout': [],
+  'Lightfoot': [
+    createFeature( 'Naturally Stealthy', 'You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you.' )
+  ],
+  'Stout': [
+    createFeature( 'Stout Resilience', 'You have advantage on saving throws against poison, and you have resistance against poison damage.' )
+  ],
   'Calashite': [],
   'Chondathan': [],
   'Damaran': [],
