@@ -2,3 +2,4 @@ node_modules
 features
 index.js
 package.json
+npm-debug.log
