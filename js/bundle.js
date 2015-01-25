@@ -19,8 +19,11 @@ module.exports = function chooseRace() {
       self = this,
       data,
       featureTemplate,
+      traitTemplate,
       $race,
-      $description;
+      $description,
+      $features,
+      $traits;
 
   function findFeaturesForRaceNamed( name ) {
     var matchesName = createMatchesName( name );
@@ -34,12 +37,29 @@ module.exports = function chooseRace() {
     return featuresObj.features || [];
   }
 
+  function findTraitsForRaceNamed( name ) {
+    var matchesName = createMatchesName( name );
+    var matched_races = data
+      .filter( function( el ) {
+        var subrace_matches = el.subraces.filter( matchesName );
+        return matchesName( el ) || subrace_matches.length > 0;
+      } );
+    var race = matched_races[0] || {};
+    var traitsObj = compileTraits( race, name );
+    return traitsObj.traits || [];
+  }
+
   function findRaceWithName( name ) {
     var featuresObj = {};
-    featuresObj.features = findFeaturesForRaceNamed( name );
+    var traitsObj = {};
 
-    $description.html( featureTemplate( featuresObj ) );
-    return featuresObj.features.length > 0;
+    featuresObj.features = findFeaturesForRaceNamed( name );
+    traitsObj.traits = findTraitsForRaceNamed( name );
+
+    $features.html( featureTemplate( featuresObj ) );
+    $traits.html( traitTemplate( traitsObj ) );
+
+    return featuresObj.features.length > 0 && traitsObj.traits.length > 0;
   }
 
   function onRaceChanged() {
@@ -99,7 +119,41 @@ module.exports = function chooseRace() {
     return featuresObj;
   }
 
+  function compileTraits( race, name ) {
+    var matchesName = createMatchesName( name );
+    var traitsObj = {};
+    var traits = race.traits;
+
+    function indexOfTrait( arr, feature ) {
+      var contains = -1;
+      var item;
+
+      for ( var i = 0, l = arr.length; i < l; i++ ) {
+        item = arr[i];
+
+        if ( item.hasOwnProperty('name') && item.name === feature.name ) {
+          contains = i;
+          break;
+        }
+      }
+
+      return contains;
+    }
+
+    race.subraces.forEach( function( item ) {
+      if ( matchesName( item ) ) {
+        traits = traits.concat( item.traits );
+      }
+    } );
+
+    traitsObj.traits = traits || [];
+
+    return traitsObj;
+  }
+
   this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
+
+  this.findTraitsForRaceNamed = findTraitsForRaceNamed;
 
   this.setup = function setup( newData ) {
     data = newData;
@@ -113,9 +167,12 @@ module.exports = function chooseRace() {
     //  The following is only needed if using a * path for page.js
     // $( document ).one( 'page.change.choose-race', function() {
       featureTemplate = Handlebars.templates['choose-race-feature'];
+      traitTemplate = Handlebars.templates['choose-race-trait'];
 
       $race = $( '#race' );
       $description = $( '#race-description' );
+      $features = $( '#race-features' );
+      $traits = $( '#race-traits' );
 
       $race.on( 'change', onRaceChanged );
     // } );
@@ -201,12 +258,41 @@ arguments[4][1][0].apply(exports,arguments)
 module.exports = function( Handlebars ) {
   'use strict';
 
-  Handlebars.registerHelper( 'choose-race-formatID', function(options) {
-    return (''+this.name).trim().toLowerCase().replace( /\s/g, '_' );
+  String.prototype.capitalize = function() {
+    if ( this.length > 0 ) {
+      return this.substr(0,1).toUpperCase() + this.substr(1);
+    }
+    return this;
+  };
+
+  Handlebars.registerHelper( 'choose-race-trait-type', function(options) {
+    var name = (''+this.name).trim();
+    var type = (''+this.type).trim();
+    var val = (''+this.value).trim();
+
+    switch ( type ) {
+      case 'ability_score_increase':
+        return 'Ability Score Increase - ' + name.capitalize();
+
+      case 'appearance':
+      case 'alignment':
+      return '(Suggested) ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+
+      case 'speed':
+      case 'language':
+      case 'skill':
+      case 'choice':
+        return name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+
+      default:
+        break;
+    }
+
+    return name;
   } );
 };
 },{}],9:[function(require,module,exports){
-var Handlebars=require("handlebars"),template=Handlebars.template,templates=Handlebars.templates=Handlebars.templates||{};templates["choose-class"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-equipment"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-race-feature"]=template({1:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</strong><br>"+i((t=null!=(t=a.value||(null!=e?e.value:e))?t:r,typeof t===s?t.call(e,{name:"value",hash:{},data:l}):t))+"</p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.features||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race"]=template({1:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=this.escapeExpression,u=a.blockHelperMissing,p='            <optgroup label="'+c((s=null!=(s=a.name||(null!=e?e.name:e))?s:o,typeof s===i?s.call(e,{name:"name",hash:{},data:l}):s))+'">\n';return s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.noop,inverse:this.program(2,l),data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),p+"            </optgroup>\n"},2:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'                <option value="'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+'">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</option>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u='<div class="row">\n  <div class="col-xs-6">\n    <form>\n      <select name="race" id="race" class="form-control">\n        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>\n        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">\n';return s=null!=(s=a.races||(null!=e?e.races:e))?s:o,r={name:"races",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.races||(t=c.call(e,t,r)),null!=t&&(u+=t),u+'        </ul>\n      </select>\n    </form>\n  </div>\n  <div class="col-xs-6" id="race-description">\n  </div>\n</div>\n'},useData:!0}),templates["describe-character"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["determine-abilities"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.index=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.notfound=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0});
+var Handlebars=require("handlebars"),template=Handlebars.template,templates=Handlebars.templates=Handlebars.templates||{};templates["choose-class"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-equipment"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-race-feature"]=template({1:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</strong><br>"+i((t=null!=(t=a.value||(null!=e?e.value:e))?t:r,typeof t===s?t.call(e,{name:"value",hash:{},data:l}):t))+"</p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.features||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race-trait"]=template({1:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((t=null!=(t=a["choose-race-trait-type"]||(null!=e?e["choose-race-trait-type"]:e))?t:r,typeof t===s?t.call(e,{name:"choose-race-trait-type",hash:{},data:l}):t))+"</strong><br>"+i((t=null!=(t=a.value||(null!=e?e.value:e))?t:r,typeof t===s?t.call(e,{name:"value",hash:{},data:l}):t))+"</p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.traits||(null!=e?e.traits:e))?s:o,r={name:"traits",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.traits||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race"]=template({1:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=this.escapeExpression,u=a.blockHelperMissing,p='            <optgroup label="'+c((s=null!=(s=a.name||(null!=e?e.name:e))?s:o,typeof s===i?s.call(e,{name:"name",hash:{},data:l}):s))+'">\n';return s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.noop,inverse:this.program(2,l),data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),p+"            </optgroup>\n"},2:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'                <option value="'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+'">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</option>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u='<div class="row">\n  <div class="col-xs-6">\n    <form>\n      <select name="race" id="race" class="form-control">\n        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>\n        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">\n';return s=null!=(s=a.races||(null!=e?e.races:e))?s:o,r={name:"races",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.races||(t=c.call(e,t,r)),null!=t&&(u+=t),u+'        </ul>\n      </select>\n    </form>\n  </div>\n  <div class="col-xs-6" id="race-description">\n    <div class="col-xs-12"><h4>Features</h4></div>\n    <div class="col-xs-12" id="race-features"></div>\n    <div class="col-xs-12"><h4>Traits</h4></div>\n    <div class="col-xs-12" id="race-traits"></div>\n  </div>\n</div>\n'},useData:!0}),templates["describe-character"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["determine-abilities"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.index=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.notfound=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0});
 },{"handlebars":27}],10:[function(require,module,exports){
 (function (global){
 

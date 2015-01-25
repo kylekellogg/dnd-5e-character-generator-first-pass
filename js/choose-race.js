@@ -5,8 +5,11 @@ module.exports = function chooseRace() {
       self = this,
       data,
       featureTemplate,
+      traitTemplate,
       $race,
-      $description;
+      $description,
+      $features,
+      $traits;
 
   function findFeaturesForRaceNamed( name ) {
     var matchesName = createMatchesName( name );
@@ -20,12 +23,29 @@ module.exports = function chooseRace() {
     return featuresObj.features || [];
   }
 
+  function findTraitsForRaceNamed( name ) {
+    var matchesName = createMatchesName( name );
+    var matched_races = data
+      .filter( function( el ) {
+        var subrace_matches = el.subraces.filter( matchesName );
+        return matchesName( el ) || subrace_matches.length > 0;
+      } );
+    var race = matched_races[0] || {};
+    var traitsObj = compileTraits( race, name );
+    return traitsObj.traits || [];
+  }
+
   function findRaceWithName( name ) {
     var featuresObj = {};
-    featuresObj.features = findFeaturesForRaceNamed( name );
+    var traitsObj = {};
 
-    $description.html( featureTemplate( featuresObj ) );
-    return featuresObj.features.length > 0;
+    featuresObj.features = findFeaturesForRaceNamed( name );
+    traitsObj.traits = findTraitsForRaceNamed( name );
+
+    $features.html( featureTemplate( featuresObj ) );
+    $traits.html( traitTemplate( traitsObj ) );
+
+    return featuresObj.features.length > 0 && traitsObj.traits.length > 0;
   }
 
   function onRaceChanged() {
@@ -85,7 +105,41 @@ module.exports = function chooseRace() {
     return featuresObj;
   }
 
+  function compileTraits( race, name ) {
+    var matchesName = createMatchesName( name );
+    var traitsObj = {};
+    var traits = race.traits;
+
+    function indexOfTrait( arr, feature ) {
+      var contains = -1;
+      var item;
+
+      for ( var i = 0, l = arr.length; i < l; i++ ) {
+        item = arr[i];
+
+        if ( item.hasOwnProperty('name') && item.name === feature.name ) {
+          contains = i;
+          break;
+        }
+      }
+
+      return contains;
+    }
+
+    race.subraces.forEach( function( item ) {
+      if ( matchesName( item ) ) {
+        traits = traits.concat( item.traits );
+      }
+    } );
+
+    traitsObj.traits = traits || [];
+
+    return traitsObj;
+  }
+
   this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
+
+  this.findTraitsForRaceNamed = findTraitsForRaceNamed;
 
   this.setup = function setup( newData ) {
     data = newData;
@@ -99,9 +153,12 @@ module.exports = function chooseRace() {
     //  The following is only needed if using a * path for page.js
     // $( document ).one( 'page.change.choose-race', function() {
       featureTemplate = Handlebars.templates['choose-race-feature'];
+      traitTemplate = Handlebars.templates['choose-race-trait'];
 
       $race = $( '#race' );
       $description = $( '#race-description' );
+      $features = $( '#race-features' );
+      $traits = $( '#race-traits' );
 
       $race.on( 'change', onRaceChanged );
     // } );
