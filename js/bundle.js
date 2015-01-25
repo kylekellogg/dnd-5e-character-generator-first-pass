@@ -276,10 +276,12 @@ module.exports = function( Handlebars ) {
 
       case 'appearance':
       case 'alignment':
-      return '(Suggested) ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+        return '(Suggested) ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+
+      case 'language':
+        return 'Language: ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
 
       case 'speed':
-      case 'language':
       case 'skill':
       case 'choice':
         return name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
