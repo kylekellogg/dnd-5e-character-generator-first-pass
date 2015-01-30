@@ -3,7 +3,6 @@
 
   var $ = require( 'jquery' );
   var page = require( 'page' );
-  var index = require( './index.js' );
   var ChooseRace = require( './choose-race.js' );
   var clss = require( './choose-class.js' );
   var abilities = require( './determine-abilities.js' );
@@ -25,8 +24,13 @@
 
     function retrieveTemplate(ctx, next) {
       var reqPage = ctx.pathname.substr(1),
-          safePage = reqPage === "" ? "index" : reqPage,
+          safePage = reqPage === "" ? "choose-race" : reqPage,
           template = Handlebars.templates[safePage];
+
+      if ( ctx.character === undefined ) {
+        ctx.character = {};
+      }
+
       $.getJSON( 'data/' + safePage + '.json' )
         .done( function onDataDone( data ) {
           ctx.jsonData = data;
@@ -50,7 +54,7 @@
         } );
     }
 
-    page( '/', retrieveTemplate, index );
+    page( '/', retrieveTemplate, race.process );
     page( '/choose-race', retrieveTemplate, race.process );
     page( '/choose-class', retrieveTemplate, clss );
     page( '/determine-abilities', retrieveTemplate, abilities );
