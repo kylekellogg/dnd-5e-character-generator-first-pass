@@ -9,9 +9,9 @@ module.exports = function(ctx, next) {
   //  Page specific
   next();
 };
-},{"jquery":28}],2:[function(require,module,exports){
+},{"jquery":27}],2:[function(require,module,exports){
 arguments[4][1][0].apply(exports,arguments)
-},{"dup":1,"jquery":28}],3:[function(require,module,exports){
+},{"dup":1,"jquery":27}],3:[function(require,module,exports){
 module.exports = function chooseRace() {
   'use strict';
   var $ = require( 'jquery' ),
@@ -23,7 +23,9 @@ module.exports = function chooseRace() {
       $race,
       $description,
       $features,
-      $traits;
+      $traits,
+      $chooseRaceForm,
+      $submit;
 
   function findFeaturesForRaceNamed( name ) {
     var matchesName = createMatchesName( name );
@@ -63,6 +65,9 @@ module.exports = function chooseRace() {
   }
 
   function onRaceChanged() {
+    $submit.removeAttr( 'disabled' );
+    $submit.removeClass( 'disabled' );
+    
     updateRace( $race.val() );
   }
 
@@ -164,6 +169,11 @@ module.exports = function chooseRace() {
     return traitsObj;
   }
 
+  function onRaceSubmit( e ) {
+    e.preventDefault();
+    return false;
+  }
+
   this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
 
   this.findTraitsForRaceNamed = findTraitsForRaceNamed;
@@ -186,6 +196,10 @@ module.exports = function chooseRace() {
       $description = $( '#race-description' );
       $features = $( '#race-features' );
       $traits = $( '#race-traits' );
+      $chooseRaceForm = $( '#choose-race-form' );
+      $submit = $chooseRaceForm.find( 'button[type=submit]' );
+
+      $chooseRaceForm.on( 'submit', onRaceSubmit );
 
       $race.on( 'change', onRaceChanged );
     // } );
@@ -194,19 +208,16 @@ module.exports = function chooseRace() {
   };
 
 };
-},{"handlebars":27,"jquery":28}],4:[function(require,module,exports){
+},{"handlebars":26,"jquery":27}],4:[function(require,module,exports){
 arguments[4][1][0].apply(exports,arguments)
-},{"dup":1,"jquery":28}],5:[function(require,module,exports){
+},{"dup":1,"jquery":27}],5:[function(require,module,exports){
 arguments[4][1][0].apply(exports,arguments)
-},{"dup":1,"jquery":28}],6:[function(require,module,exports){
-arguments[4][1][0].apply(exports,arguments)
-},{"dup":1,"jquery":28}],7:[function(require,module,exports){
+},{"dup":1,"jquery":27}],6:[function(require,module,exports){
 (function() {
   'use strict';
 
   var $ = require( 'jquery' );
   var page = require( 'page' );
-  var index = require( './index.js' );
   var ChooseRace = require( './choose-race.js' );
   var clss = require( './choose-class.js' );
   var abilities = require( './determine-abilities.js' );
@@ -228,8 +239,13 @@ arguments[4][1][0].apply(exports,arguments)
 
     function retrieveTemplate(ctx, next) {
       var reqPage = ctx.pathname.substr(1),
-          safePage = reqPage === "" ? "index" : reqPage,
+          safePage = reqPage === "" ? "choose-race" : reqPage,
           template = Handlebars.templates[safePage];
+
+      if ( ctx.character === undefined ) {
+        ctx.character = {};
+      }
+
       $.getJSON( 'data/' + safePage + '.json' )
         .done( function onDataDone( data ) {
           ctx.jsonData = data;
@@ -253,7 +269,7 @@ arguments[4][1][0].apply(exports,arguments)
         } );
     }
 
-    page( '/', retrieveTemplate, index );
+    page( '/', retrieveTemplate, race.process );
     page( '/choose-race', retrieveTemplate, race.process );
     page( '/choose-class', retrieveTemplate, clss );
     page( '/determine-abilities', retrieveTemplate, abilities );
@@ -267,7 +283,7 @@ arguments[4][1][0].apply(exports,arguments)
   } );
 })();
 
-},{"./choose-class.js":1,"./choose-equipment.js":2,"./choose-race.js":3,"./describe-character.js":4,"./determine-abilities.js":5,"./index.js":6,"./template.helpers.js":8,"./templates.js":9,"bootstrap":10,"handlebars":27,"jquery":28,"page":29}],8:[function(require,module,exports){
+},{"./choose-class.js":1,"./choose-equipment.js":2,"./choose-race.js":3,"./describe-character.js":4,"./determine-abilities.js":5,"./template.helpers.js":7,"./templates.js":8,"bootstrap":9,"handlebars":26,"jquery":27,"page":28}],7:[function(require,module,exports){
 module.exports = function( Handlebars ) {
   'use strict';
 
@@ -374,9 +390,9 @@ module.exports = function( Handlebars ) {
   } );
 
 };
-},{}],9:[function(require,module,exports){
-var Handlebars=require("handlebars"),template=Handlebars.template,templates=Handlebars.templates=Handlebars.templates||{};templates["choose-class"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-equipment"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-race-feature"]=template({1:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</strong><br>"+i((t=null!=(t=a.value||(null!=e?e.value:e))?t:r,typeof t===s?t.call(e,{name:"value",hash:{},data:l}):t))+"</p>\n  </div>\n</div>\n"},3:function(){return'<div class="row">\n  <div class="col-xs-12">\n    <p>None</p>\n  </div>\n</div>\n'},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.features||(t=c.call(e,t,r)),null!=t&&(u+=t),s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.noop,inverse:this.program(3,l),data:l},t=typeof s===i?s.call(e,r):s,a.features||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race-trait"]=template({1:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a["choose-race-trait-should-render"]||(null!=e?e["choose-race-trait-should-render"]:e))?s:o,r={name:"choose-race-trait-should-render",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a["choose-race-trait-should-render"]||(t=c.call(e,t,r)),null!=t&&(u+=t),u},2:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p>\n      <strong class="feature-header">'+i((t=null!=(t=a["choose-race-trait-type"]||(null!=e?e["choose-race-trait-type"]:e))?t:r,typeof t===s?t.call(e,{name:"choose-race-trait-type",hash:{},data:l}):t))+"</strong> "+i((t=null!=(t=a["choose-race-trait-value"]||(null!=e?e["choose-race-trait-value"]:e))?t:r,typeof t===s?t.call(e,{name:"choose-race-trait-value",hash:{},data:l}):t))+"\n    </p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.traits||(null!=e?e.traits:e))?s:o,r={name:"traits",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.traits||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race"]=template({1:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=this.escapeExpression,u=a.blockHelperMissing,p='            <optgroup label="'+c((s=null!=(s=a.name||(null!=e?e.name:e))?s:o,typeof s===i?s.call(e,{name:"name",hash:{},data:l}):s))+'">\n';return s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.noop,inverse:this.program(2,l),data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),p+"            </optgroup>\n"},2:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'                <option value="'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+'">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</option>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u='<div class="row">\n  <div class="col-xs-6">\n    <form>\n      <select name="race" id="race" class="form-control">\n        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>\n        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">\n';return s=null!=(s=a.races||(null!=e?e.races:e))?s:o,r={name:"races",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.races||(t=c.call(e,t,r)),null!=t&&(u+=t),u+'        </ul>\n      </select>\n    </form>\n  </div>\n  <div class="col-xs-6" id="race-description">\n    <div class="col-xs-12"><h4>Features</h4></div>\n    <div class="col-xs-12" id="race-features"></div>\n    <div class="col-xs-12"><h4>Traits</h4></div>\n    <div class="col-xs-12" id="race-traits"></div>\n  </div>\n</div>\n'},useData:!0}),templates["describe-character"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["determine-abilities"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.index=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.notfound=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0});
-},{"handlebars":27}],10:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
+var Handlebars=require("handlebars"),template=Handlebars.template,templates=Handlebars.templates=Handlebars.templates||{};templates["choose-class"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-equipment"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-race-feature"]=template({1:function(e,a,n,t){var l,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((l=null!=(l=a.name||(null!=e?e.name:e))?l:r,typeof l===s?l.call(e,{name:"name",hash:{},data:t}):l))+"</strong><br>"+i((l=null!=(l=a.value||(null!=e?e.value:e))?l:r,typeof l===s?l.call(e,{name:"value",hash:{},data:t}):l))+"</p>\n  </div>\n</div>\n"},3:function(){return'<div class="row">\n  <div class="col-xs-12">\n    <p>None</p>\n  </div>\n</div>\n'},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,t){var l,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.program(1,t),inverse:this.noop,data:t},l=typeof s===i?s.call(e,r):s,a.features||(l=c.call(e,l,r)),null!=l&&(u+=l),s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.noop,inverse:this.program(3,t),data:t},l=typeof s===i?s.call(e,r):s,a.features||(l=c.call(e,l,r)),null!=l&&(u+=l),u},useData:!0}),templates["choose-race-trait"]=template({1:function(e,a,n,t){var l,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a["choose-race-trait-should-render"]||(null!=e?e["choose-race-trait-should-render"]:e))?s:o,r={name:"choose-race-trait-should-render",hash:{},fn:this.program(2,t),inverse:this.noop,data:t},l=typeof s===i?s.call(e,r):s,a["choose-race-trait-should-render"]||(l=c.call(e,l,r)),null!=l&&(u+=l),u},2:function(e,a,n,t){var l,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p>\n      <strong class="feature-header">'+i((l=null!=(l=a["choose-race-trait-type"]||(null!=e?e["choose-race-trait-type"]:e))?l:r,typeof l===s?l.call(e,{name:"choose-race-trait-type",hash:{},data:t}):l))+"</strong> "+i((l=null!=(l=a["choose-race-trait-value"]||(null!=e?e["choose-race-trait-value"]:e))?l:r,typeof l===s?l.call(e,{name:"choose-race-trait-value",hash:{},data:t}):l))+"\n    </p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,t){var l,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.traits||(null!=e?e.traits:e))?s:o,r={name:"traits",hash:{},fn:this.program(1,t),inverse:this.noop,data:t},l=typeof s===i?s.call(e,r):s,a.traits||(l=c.call(e,l,r)),null!=l&&(u+=l),u},useData:!0}),templates["choose-race"]=template({1:function(e,a,n,t){var l,s,r,i="function",o=a.helperMissing,c=this.escapeExpression,u=a.blockHelperMissing,p='            <optgroup label="'+c((s=null!=(s=a.name||(null!=e?e.name:e))?s:o,typeof s===i?s.call(e,{name:"name",hash:{},data:t}):s))+'">\n';return s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.program(2,t),inverse:this.noop,data:t},l=typeof s===i?s.call(e,r):s,a.subraces||(l=u.call(e,l,r)),null!=l&&(p+=l),s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.noop,inverse:this.program(2,t),data:t},l=typeof s===i?s.call(e,r):s,a.subraces||(l=u.call(e,l,r)),null!=l&&(p+=l),p+"            </optgroup>\n"},2:function(e,a,n,t){var l,s="function",r=a.helperMissing,i=this.escapeExpression;return'                <option value="'+i((l=null!=(l=a.name||(null!=e?e.name:e))?l:r,typeof l===s?l.call(e,{name:"name",hash:{},data:t}):l))+'">'+i((l=null!=(l=a.name||(null!=e?e.name:e))?l:r,typeof l===s?l.call(e,{name:"name",hash:{},data:t}):l))+"</option>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,t){var l,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u='<div class="row">\n  <div class="col-xs-6">\n    <form id="choose-race-form">\n      <select name="race" id="race" class="form-control">\n        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>\n        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">\n';return s=null!=(s=a.races||(null!=e?e.races:e))?s:o,r={name:"races",hash:{},fn:this.program(1,t),inverse:this.noop,data:t},l=typeof s===i?s.call(e,r):s,a.races||(l=c.call(e,l,r)),null!=l&&(u+=l),u+'        </ul>\n      </select>\n\n      <button type="submit" class="btn btn-default disabled" disabled="disabled">Next Step</button>\n    </form>\n  </div>\n  <div class="col-xs-6" id="race-description">\n    <div class="col-xs-12"><h4>Features</h4></div>\n    <div class="col-xs-12" id="race-features"></div>\n    <div class="col-xs-12"><h4>Traits</h4></div>\n    <div class="col-xs-12" id="race-traits"></div>\n  </div>\n</div>\n'},useData:!0}),templates["describe-character"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["determine-abilities"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.index=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.notfound=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0});
+},{"handlebars":26}],9:[function(require,module,exports){
 (function (global){
 
 ; jQuery = global.jQuery = require("jquery");
@@ -391,9 +407,9 @@ if("undefined"==typeof jQuery)throw new Error("Bootstrap's JavaScript requires j
 }).call(global, module, undefined, undefined);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":28}],11:[function(require,module,exports){
+},{"jquery":27}],10:[function(require,module,exports){
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var Handlebars = require("./handlebars.runtime")["default"];
@@ -433,7 +449,7 @@ Handlebars.create = create;
 Handlebars['default'] = Handlebars;
 
 exports["default"] = Handlebars;
-},{"./handlebars.runtime":13,"./handlebars/compiler/ast":15,"./handlebars/compiler/base":16,"./handlebars/compiler/compiler":17,"./handlebars/compiler/javascript-compiler":19}],13:[function(require,module,exports){
+},{"./handlebars.runtime":12,"./handlebars/compiler/ast":14,"./handlebars/compiler/base":15,"./handlebars/compiler/compiler":16,"./handlebars/compiler/javascript-compiler":18}],12:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -469,7 +485,7 @@ Handlebars.create = create;
 Handlebars['default'] = Handlebars;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":14,"./handlebars/exception":23,"./handlebars/runtime":24,"./handlebars/safe-string":25,"./handlebars/utils":26}],14:[function(require,module,exports){
+},{"./handlebars/base":13,"./handlebars/exception":22,"./handlebars/runtime":23,"./handlebars/safe-string":24,"./handlebars/utils":25}],13:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -701,7 +717,7 @@ var createFrame = function(object) {
   return frame;
 };
 exports.createFrame = createFrame;
-},{"./exception":23,"./utils":26}],15:[function(require,module,exports){
+},{"./exception":22,"./utils":25}],14:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -916,7 +932,7 @@ var AST = {
 // Must be exported as an object rather than the root of the module as the jison lexer
 // most modify the object to operate properly.
 exports["default"] = AST;
-},{"../exception":23}],16:[function(require,module,exports){
+},{"../exception":22}],15:[function(require,module,exports){
 "use strict";
 var parser = require("./parser")["default"];
 var AST = require("./ast")["default"];
@@ -938,7 +954,7 @@ function parse(input) {
 }
 
 exports.parse = parse;
-},{"../utils":26,"./ast":15,"./helpers":18,"./parser":20}],17:[function(require,module,exports){
+},{"../utils":25,"./ast":14,"./helpers":17,"./parser":19}],16:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 var isArray = require("../utils").isArray;
@@ -1391,7 +1407,7 @@ exports.compile = compile;function argEquals(a, b) {
     return true;
   }
 }
-},{"../exception":23,"../utils":26}],18:[function(require,module,exports){
+},{"../exception":22,"../utils":25}],17:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -1579,7 +1595,7 @@ function omitLeft(statements, i, multiple) {
   current.leftStripped = current.string !== original;
   return current.leftStripped;
 }
-},{"../exception":23}],19:[function(require,module,exports){
+},{"../exception":22}],18:[function(require,module,exports){
 "use strict";
 var COMPILER_REVISION = require("../base").COMPILER_REVISION;
 var REVISION_CHANGES = require("../base").REVISION_CHANGES;
@@ -2544,7 +2560,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 exports["default"] = JavaScriptCompiler;
-},{"../base":14,"../exception":23}],20:[function(require,module,exports){
+},{"../base":13,"../exception":22}],19:[function(require,module,exports){
 "use strict";
 /* jshint ignore:start */
 /* istanbul ignore next */
@@ -3045,7 +3061,7 @@ function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Pa
 return new Parser;
 })();exports["default"] = handlebars;
 /* jshint ignore:end */
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 var Visitor = require("./visitor")["default"];
 
@@ -3187,7 +3203,7 @@ PrintVisitor.prototype.content = function(content) {
 PrintVisitor.prototype.comment = function(comment) {
   return this.pad("{{! '" + comment.comment + "' }}");
 };
-},{"./visitor":22}],22:[function(require,module,exports){
+},{"./visitor":21}],21:[function(require,module,exports){
 "use strict";
 function Visitor() {}
 
@@ -3200,7 +3216,7 @@ Visitor.prototype = {
 };
 
 exports["default"] = Visitor;
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -3229,7 +3245,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -3423,7 +3439,7 @@ exports.noop = noop;function initData(context, data) {
   }
   return data;
 }
-},{"./base":14,"./exception":23,"./utils":26}],25:[function(require,module,exports){
+},{"./base":13,"./exception":22,"./utils":25}],24:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -3435,7 +3451,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -3524,7 +3540,7 @@ exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
 }
 
 exports.appendContextPath = appendContextPath;
-},{"./safe-string":25}],27:[function(require,module,exports){
+},{"./safe-string":24}],26:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 
@@ -3552,7 +3568,7 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions[".hbs"] = extension;
 }
 
-},{"../dist/cjs/handlebars":12,"../dist/cjs/handlebars/compiler/printer":21,"../dist/cjs/handlebars/compiler/visitor":22,"fs":11}],28:[function(require,module,exports){
+},{"../dist/cjs/handlebars":11,"../dist/cjs/handlebars/compiler/printer":20,"../dist/cjs/handlebars/compiler/visitor":21,"fs":10}],27:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.3
  * http://jquery.com/
@@ -12759,7 +12775,7 @@ return jQuery;
 
 }));
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
   /* globals require, module */
 
 /**
@@ -13294,7 +13310,7 @@ return jQuery;
 
   page.sameOrigin = sameOrigin;
 
-},{"path-to-regexp":30}],30:[function(require,module,exports){
+},{"path-to-regexp":29}],29:[function(require,module,exports){
 var isArray = require('isarray');
 
 /**
@@ -13498,9 +13514,9 @@ function pathToRegexp (path, keys, options) {
   return attachKeys(new RegExp('^' + route, flags(options)), keys);
 }
 
-},{"isarray":31}],31:[function(require,module,exports){
+},{"isarray":30}],30:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}]},{},[7]);
+},{}]},{},[6]);

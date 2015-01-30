@@ -9,7 +9,9 @@ module.exports = function chooseRace() {
       $race,
       $description,
       $features,
-      $traits;
+      $traits,
+      $chooseRaceForm,
+      $submit;
 
   function findFeaturesForRaceNamed( name ) {
     var matchesName = createMatchesName( name );
@@ -49,6 +51,9 @@ module.exports = function chooseRace() {
   }
 
   function onRaceChanged() {
+    $submit.removeAttr( 'disabled' );
+    $submit.removeClass( 'disabled' );
+    
     updateRace( $race.val() );
   }
 
@@ -150,6 +155,11 @@ module.exports = function chooseRace() {
     return traitsObj;
   }
 
+  function onRaceSubmit( e ) {
+    e.preventDefault();
+    return false;
+  }
+
   this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
 
   this.findTraitsForRaceNamed = findTraitsForRaceNamed;
@@ -172,6 +182,10 @@ module.exports = function chooseRace() {
       $description = $( '#race-description' );
       $features = $( '#race-features' );
       $traits = $( '#race-traits' );
+      $chooseRaceForm = $( '#choose-race-form' );
+      $submit = $chooseRaceForm.find( 'button[type=submit]' );
+
+      $chooseRaceForm.on( 'submit', onRaceSubmit );
 
       $race.on( 'change', onRaceChanged );
     // } );
