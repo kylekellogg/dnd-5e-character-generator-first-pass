@@ -132,6 +132,19 @@ module.exports = function chooseRace() {
       }
     } );
 
+    //  Sort by type
+    traits.sort( function( a, b ) {
+      var types = ['language', 'speed', 'appearance', 'ability_score_increase', 'skill', 'choice'];
+      var aval = types.indexOf( a.type );
+      var bval = types.indexOf( b.type );
+
+      if ( aval === -1 ) return 1;
+      if ( bval === -1 ) return -1;
+
+      //  0-0 = 0, 0-1 = -1 (before), 1-0 = 1 (after)
+      return aval - bval;
+    } );
+
     traitsObj.traits = traits || [];
 
     return traitsObj;

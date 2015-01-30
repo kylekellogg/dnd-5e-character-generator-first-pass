@@ -146,6 +146,19 @@ module.exports = function chooseRace() {
       }
     } );
 
+    //  Sort by type
+    traits.sort( function( a, b ) {
+      var types = ['language', 'speed', 'appearance', 'ability_score_increase', 'skill', 'choice'];
+      var aval = types.indexOf( a.type );
+      var bval = types.indexOf( b.type );
+
+      if ( aval === -1 ) return 1;
+      if ( bval === -1 ) return -1;
+
+      //  0-0 = 0, 0-1 = -1 (before), 1-0 = 1 (after)
+      return aval - bval;
+    } );
+
     traitsObj.traits = traits || [];
 
     return traitsObj;
@@ -265,6 +278,34 @@ module.exports = function( Handlebars ) {
     return this;
   };
 
+  String.prototype.capitalizeWords = function() {
+    if ( this.length > 0 ) {
+      return this.split( ' ' ).map( function( str ) { return str.capitalize(); } ).join( ' ' );
+    }
+    return this;
+  };
+
+  Handlebars.registerHelper( 'choose-race-trait-should-render', function(options) {
+    var type = (''+this.type).trim();
+    var should_render = false;
+
+    switch ( type ) {
+      case 'ability_score_increase':
+      case 'language':
+      case 'speed':
+      case 'choice':
+      case 'skill':
+        should_render = true;
+        break;
+
+      case 'appearance':
+        should_render = (''+this.name) === 'size';
+        break;
+    }
+
+    return should_render ? options.fn( this ) : null;
+  } );
+
   Handlebars.registerHelper( 'choose-race-trait-type', function(options) {
     var name = (''+this.name).trim();
     var type = (''+this.type).trim();
@@ -272,19 +313,22 @@ module.exports = function( Handlebars ) {
 
     switch ( type ) {
       case 'ability_score_increase':
-        return 'Ability Score Increase - ' + name.capitalize();
+        return 'Ability Score Increase: ';
 
       case 'appearance':
       case 'alignment':
-        return '(Suggested) ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+        if ( name === 'size' ) return name.capitalize();
+        return '';//'(Suggested) ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
 
       case 'language':
-        return 'Language: ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+        return 'Language: ';
 
       case 'speed':
-      case 'skill':
       case 'choice':
-        return name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+        return name.capitalizeWords();
+
+      case 'skill':
+        return 'Proficiency: ';
 
       default:
         break;
@@ -292,9 +336,46 @@ module.exports = function( Handlebars ) {
 
     return name;
   } );
+
+  Handlebars.registerHelper( 'choose-race-trait-value', function(options) {
+    var name = (''+this.name).trim();
+    var type = (''+this.type).trim();
+    var val = (''+this.value).trim();
+    var per_level = ( this.hasOwnProperty( 'per_level' ) ) ? !!this.per_level : false;
+    var proficient = ( this.hasOwnProperty( 'proficient' ) ) ? !!this.proficient : false;
+
+    switch ( type ) {
+      case 'ability_score_increase':
+        return name.capitalize() + ' ' + (+val > 0 ? '+' + val : val);
+
+      case 'language':
+        return name.capitalizeWords();
+
+      case 'appearance':
+        return name === 'size' ? val.capitalizeWords() : '';
+
+      case 'alignment':
+        return '';
+
+      case 'speed':
+        return val + ' feet';
+
+      case 'skill':
+        return name.capitalizeWords() + (( per_level ) ? ' Per Level' : '');
+
+      case 'choice':
+        return 'Complicated rendering should go here';
+
+      default:
+        break;
+    }
+
+    return val;
+  } );
+
 };
 },{}],9:[function(require,module,exports){
-var Handlebars=require("handlebars"),template=Handlebars.template,templates=Handlebars.templates=Handlebars.templates||{};templates["choose-class"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-equipment"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-race-feature"]=template({1:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</strong><br>"+i((t=null!=(t=a.value||(null!=e?e.value:e))?t:r,typeof t===s?t.call(e,{name:"value",hash:{},data:l}):t))+"</p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.features||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race-trait"]=template({1:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((t=null!=(t=a["choose-race-trait-type"]||(null!=e?e["choose-race-trait-type"]:e))?t:r,typeof t===s?t.call(e,{name:"choose-race-trait-type",hash:{},data:l}):t))+"</strong><br>"+i((t=null!=(t=a.value||(null!=e?e.value:e))?t:r,typeof t===s?t.call(e,{name:"value",hash:{},data:l}):t))+"</p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.traits||(null!=e?e.traits:e))?s:o,r={name:"traits",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.traits||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race"]=template({1:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=this.escapeExpression,u=a.blockHelperMissing,p='            <optgroup label="'+c((s=null!=(s=a.name||(null!=e?e.name:e))?s:o,typeof s===i?s.call(e,{name:"name",hash:{},data:l}):s))+'">\n';return s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.noop,inverse:this.program(2,l),data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),p+"            </optgroup>\n"},2:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'                <option value="'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+'">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</option>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u='<div class="row">\n  <div class="col-xs-6">\n    <form>\n      <select name="race" id="race" class="form-control">\n        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>\n        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">\n';return s=null!=(s=a.races||(null!=e?e.races:e))?s:o,r={name:"races",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.races||(t=c.call(e,t,r)),null!=t&&(u+=t),u+'        </ul>\n      </select>\n    </form>\n  </div>\n  <div class="col-xs-6" id="race-description">\n    <div class="col-xs-12"><h4>Features</h4></div>\n    <div class="col-xs-12" id="race-features"></div>\n    <div class="col-xs-12"><h4>Traits</h4></div>\n    <div class="col-xs-12" id="race-traits"></div>\n  </div>\n</div>\n'},useData:!0}),templates["describe-character"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["determine-abilities"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.index=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.notfound=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0});
+var Handlebars=require("handlebars"),template=Handlebars.template,templates=Handlebars.templates=Handlebars.templates||{};templates["choose-class"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-equipment"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-race-feature"]=template({1:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</strong><br>"+i((t=null!=(t=a.value||(null!=e?e.value:e))?t:r,typeof t===s?t.call(e,{name:"value",hash:{},data:l}):t))+"</p>\n  </div>\n</div>\n"},3:function(){return'<div class="row">\n  <div class="col-xs-12">\n    <p>None</p>\n  </div>\n</div>\n'},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.features||(t=c.call(e,t,r)),null!=t&&(u+=t),s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.noop,inverse:this.program(3,l),data:l},t=typeof s===i?s.call(e,r):s,a.features||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race-trait"]=template({1:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a["choose-race-trait-should-render"]||(null!=e?e["choose-race-trait-should-render"]:e))?s:o,r={name:"choose-race-trait-should-render",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a["choose-race-trait-should-render"]||(t=c.call(e,t,r)),null!=t&&(u+=t),u},2:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p>\n      <strong class="feature-header">'+i((t=null!=(t=a["choose-race-trait-type"]||(null!=e?e["choose-race-trait-type"]:e))?t:r,typeof t===s?t.call(e,{name:"choose-race-trait-type",hash:{},data:l}):t))+"</strong> "+i((t=null!=(t=a["choose-race-trait-value"]||(null!=e?e["choose-race-trait-value"]:e))?t:r,typeof t===s?t.call(e,{name:"choose-race-trait-value",hash:{},data:l}):t))+"\n    </p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.traits||(null!=e?e.traits:e))?s:o,r={name:"traits",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.traits||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race"]=template({1:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=this.escapeExpression,u=a.blockHelperMissing,p='            <optgroup label="'+c((s=null!=(s=a.name||(null!=e?e.name:e))?s:o,typeof s===i?s.call(e,{name:"name",hash:{},data:l}):s))+'">\n';return s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.noop,inverse:this.program(2,l),data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),p+"            </optgroup>\n"},2:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'                <option value="'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+'">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</option>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u='<div class="row">\n  <div class="col-xs-6">\n    <form>\n      <select name="race" id="race" class="form-control">\n        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>\n        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">\n';return s=null!=(s=a.races||(null!=e?e.races:e))?s:o,r={name:"races",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.races||(t=c.call(e,t,r)),null!=t&&(u+=t),u+'        </ul>\n      </select>\n    </form>\n  </div>\n  <div class="col-xs-6" id="race-description">\n    <div class="col-xs-12"><h4>Features</h4></div>\n    <div class="col-xs-12" id="race-features"></div>\n    <div class="col-xs-12"><h4>Traits</h4></div>\n    <div class="col-xs-12" id="race-traits"></div>\n  </div>\n</div>\n'},useData:!0}),templates["describe-character"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["determine-abilities"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.index=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.notfound=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0});
 },{"handlebars":27}],10:[function(require,module,exports){
 (function (global){
 
