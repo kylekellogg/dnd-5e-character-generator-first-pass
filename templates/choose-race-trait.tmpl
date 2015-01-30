@@ -1,7 +1,11 @@
 {{#traits}}
+{{#choose-race-trait-should-render}}
 <div class="row">
   <div class="col-xs-12">
-    <p><strong class="feature-header">{{choose-race-trait-type}}</strong><br>{{value}}</p>
+    <p>
+      <strong class="feature-header">{{choose-race-trait-type}}</strong> {{choose-race-trait-value}}
+    </p>
   </div>
 </div>
+{{/choose-race-trait-should-render}}
 {{/traits}}
