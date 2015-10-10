@@ -1,4 +1,52 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = function Character( opts ) {
+  var defaultOpts = {
+        traits: [],
+        features: [],
+        appearance: {
+          age: '',
+          height: '',
+          weight: '',
+          size: ''
+        },
+        stats: {
+          hit_points: 0,
+          strength: 0,
+          dexterity: 0,
+          constitution: 0,
+          wisdom: 0,
+          intelligence: 0,
+          charisma: 0
+        }
+      },
+      mergedOpts = merge( defaultOpts, opts ),
+      self = this;
+
+  function merge( obj1, obj2 ) {
+    var ret = {},
+        attr;
+    for ( attr in obj1 ) { ret[attr] = obj1[attr]; }
+    for ( attr in obj2 ) { ret[attr] = obj2[attr]; }
+    return ret;
+  }
+
+  this.traits = defaultOpts.traits;
+  this.features = defaultOpts.features;
+  this.appearance = defaultOpts.appearance;
+  this.stats = defaultOpts.stats;
+
+  this.init = function init() {
+    self.traits = mergedOpts.traits;
+    self.features = mergedOpts.features;
+    self.appearance = mergedOpts.appearance;
+    self.stats = mergedOpts.stats;
+
+    return self;
+  };
+
+};
+
+},{}],2:[function(require,module,exports){
 module.exports = function(ctx, next) {
   'use strict';
   var $ = require( 'jquery' );
@@ -9,13 +57,14 @@ module.exports = function(ctx, next) {
   //  Page specific
   next();
 };
-},{"jquery":28}],2:[function(require,module,exports){
-arguments[4][1][0].apply(exports,arguments)
-},{"dup":1,"jquery":28}],3:[function(require,module,exports){
+},{"jquery":28}],3:[function(require,module,exports){
+arguments[4][2][0].apply(exports,arguments)
+},{"dup":2,"jquery":28}],4:[function(require,module,exports){
 module.exports = function chooseRace() {
   'use strict';
   var $ = require( 'jquery' ),
       Handlebars = require( 'handlebars' ),
+      page = require( 'page' ),
       self = this,
       data,
       featureTemplate,
@@ -23,7 +72,9 @@ module.exports = function chooseRace() {
       $race,
       $description,
       $features,
-      $traits;
+      $traits,
+      $chooseRaceForm,
+      $submit;
 
   function findFeaturesForRaceNamed( name ) {
     var matchesName = createMatchesName( name );
@@ -63,6 +114,9 @@ module.exports = function chooseRace() {
   }
 
   function onRaceChanged() {
+    $submit.removeAttr( 'disabled' );
+    $submit.removeClass( 'disabled' );
+    
     updateRace( $race.val() );
   }
 
@@ -146,9 +200,38 @@ module.exports = function chooseRace() {
       }
     } );
 
+    //  Sort by type
+    traits.sort( function( a, b ) {
+      var types = ['language', 'speed', 'appearance', 'ability_score_increase', 'skill', 'choice'];
+      var aval = types.indexOf( a.type );
+      var bval = types.indexOf( b.type );
+
+      if ( aval === -1 ) return 1;
+      if ( bval === -1 ) return -1;
+
+      //  0-0 = 0, 0-1 = -1 (before), 1-0 = 1 (after)
+      return aval - bval;
+    } );
+
     traitsObj.traits = traits || [];
 
     return traitsObj;
+  }
+
+  function onRaceSubmit( ctx ) {
+    return function( e ) {
+      console.log( 'Character was:', ctx.character );
+      ctx.character.traits = findTraitsForRaceNamed( $race.val() );
+      //  TODO: Filter traits to move appearance out into ctx.character.appearance
+      ctx.character.features = findFeaturesForRaceNamed( $race.val() );
+      console.log( 'Character is:', ctx.character );
+      ctx.save();
+
+      page( '/choose-class' );
+
+      e.preventDefault();
+      return false;
+    };
   }
 
   this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
@@ -173,6 +256,10 @@ module.exports = function chooseRace() {
       $description = $( '#race-description' );
       $features = $( '#race-features' );
       $traits = $( '#race-traits' );
+      $chooseRaceForm = $( '#choose-race-form' );
+      $submit = $chooseRaceForm.find( 'button[type=submit]' );
+
+      $chooseRaceForm.on( 'submit', onRaceSubmit(ctx) );
 
       $race.on( 'change', onRaceChanged );
     // } );
@@ -181,19 +268,16 @@ module.exports = function chooseRace() {
   };
 
 };
-},{"handlebars":27,"jquery":28}],4:[function(require,module,exports){
-arguments[4][1][0].apply(exports,arguments)
-},{"dup":1,"jquery":28}],5:[function(require,module,exports){
-arguments[4][1][0].apply(exports,arguments)
-},{"dup":1,"jquery":28}],6:[function(require,module,exports){
-arguments[4][1][0].apply(exports,arguments)
-},{"dup":1,"jquery":28}],7:[function(require,module,exports){
+},{"handlebars":27,"jquery":28,"page":29}],5:[function(require,module,exports){
+arguments[4][2][0].apply(exports,arguments)
+},{"dup":2,"jquery":28}],6:[function(require,module,exports){
+arguments[4][2][0].apply(exports,arguments)
+},{"dup":2,"jquery":28}],7:[function(require,module,exports){
 (function() {
   'use strict';
 
   var $ = require( 'jquery' );
   var page = require( 'page' );
-  var index = require( './index.js' );
   var ChooseRace = require( './choose-race.js' );
   var clss = require( './choose-class.js' );
   var abilities = require( './determine-abilities.js' );
@@ -203,6 +287,7 @@ arguments[4][1][0].apply(exports,arguments)
   var Handlebars = require( 'handlebars' );
   var helpers = require( './template.helpers.js' )( Handlebars );
   var templates = require( './templates.js' );
+  var Character = require( './character.js' );
   var bootstrap = require( 'bootstrap' );
 
   var race = new ChooseRace();
@@ -215,19 +300,27 @@ arguments[4][1][0].apply(exports,arguments)
 
     function retrieveTemplate(ctx, next) {
       var reqPage = ctx.pathname.substr(1),
-          safePage = reqPage === "" ? "index" : reqPage,
+          safePage = reqPage === "" ? "choose-race" : reqPage,
           template = Handlebars.templates[safePage];
+
+      if ( ctx.character === undefined ) {
+        ctx.character = new Character();
+      }
+
       $.getJSON( 'data/' + safePage + '.json' )
         .done( function onDataDone( data ) {
           ctx.jsonData = data;
 
+          var tmp = template( data );
+
           //  Apply template
-          $main.html( template( data ) )
+          $main.html( tmp )
             .removeAttr( 'class' )
             .addClass( safePage );
 
           document.title = data.title || 'Character Generator for D&D 5e';
 
+          console.log( 'triggering', 'page.change.' + safePage );
           $document.trigger( 'page.change.' + safePage );
         } )
         .fail( function onDataFail() {
@@ -236,11 +329,14 @@ arguments[4][1][0].apply(exports,arguments)
         } )
         .always( function onDataAlways() {
           ctx.save();
+
+          console.log( 'From main:', ctx.character );
+
           next();
         } );
     }
 
-    page( '/', retrieveTemplate, index );
+    page( '/', retrieveTemplate, race.process );
     page( '/choose-race', retrieveTemplate, race.process );
     page( '/choose-class', retrieveTemplate, clss );
     page( '/determine-abilities', retrieveTemplate, abilities );
@@ -254,7 +350,7 @@ arguments[4][1][0].apply(exports,arguments)
   } );
 })();
 
-},{"./choose-class.js":1,"./choose-equipment.js":2,"./choose-race.js":3,"./describe-character.js":4,"./determine-abilities.js":5,"./index.js":6,"./template.helpers.js":8,"./templates.js":9,"bootstrap":10,"handlebars":27,"jquery":28,"page":29}],8:[function(require,module,exports){
+},{"./character.js":1,"./choose-class.js":2,"./choose-equipment.js":3,"./choose-race.js":4,"./describe-character.js":5,"./determine-abilities.js":6,"./template.helpers.js":8,"./templates.js":9,"bootstrap":10,"handlebars":27,"jquery":28,"page":29}],8:[function(require,module,exports){
 module.exports = function( Handlebars ) {
   'use strict';
 
@@ -265,6 +361,34 @@ module.exports = function( Handlebars ) {
     return this;
   };
 
+  String.prototype.capitalizeWords = function() {
+    if ( this.length > 0 ) {
+      return this.split( ' ' ).map( function( str ) { return str.capitalize(); } ).join( ' ' );
+    }
+    return this;
+  };
+
+  Handlebars.registerHelper( 'choose-race-trait-should-render', function(options) {
+    var type = (''+this.type).trim();
+    var should_render = false;
+
+    switch ( type ) {
+      case 'ability_score_increase':
+      case 'language':
+      case 'speed':
+      case 'choice':
+      case 'skill':
+        should_render = true;
+        break;
+
+      case 'appearance':
+        should_render = (''+this.name) === 'size';
+        break;
+    }
+
+    return should_render ? options.fn( this ) : null;
+  } );
+
   Handlebars.registerHelper( 'choose-race-trait-type', function(options) {
     var name = (''+this.name).trim();
     var type = (''+this.type).trim();
@@ -272,19 +396,22 @@ module.exports = function( Handlebars ) {
 
     switch ( type ) {
       case 'ability_score_increase':
-        return 'Ability Score Increase - ' + name.capitalize();
+        return 'Ability Score Increase: ';
 
       case 'appearance':
       case 'alignment':
-        return '(Suggested) ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+        if ( name === 'size' ) return name.capitalize();
+        return '';//'(Suggested) ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
 
       case 'language':
-        return 'Language: ' + name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+        return 'Language: ';
 
       case 'speed':
-      case 'skill':
       case 'choice':
-        return name.split(' ').map( function( str ) { return str.capitalize(); } ).join(' ');
+        return name.capitalizeWords();
+
+      case 'skill':
+        return 'Proficiency: ';
 
       default:
         break;
@@ -292,9 +419,46 @@ module.exports = function( Handlebars ) {
 
     return name;
   } );
+
+  Handlebars.registerHelper( 'choose-race-trait-value', function(options) {
+    var name = (''+this.name).trim();
+    var type = (''+this.type).trim();
+    var val = (''+this.value).trim();
+    var per_level = ( this.hasOwnProperty( 'per_level' ) ) ? !!this.per_level : false;
+    var proficient = ( this.hasOwnProperty( 'proficient' ) ) ? !!this.proficient : false;
+
+    switch ( type ) {
+      case 'ability_score_increase':
+        return name.capitalize() + ' ' + (+val > 0 ? '+' + val : val);
+
+      case 'language':
+        return name.capitalizeWords();
+
+      case 'appearance':
+        return name === 'size' ? val.capitalizeWords() : '';
+
+      case 'alignment':
+        return '';
+
+      case 'speed':
+        return val + ' feet';
+
+      case 'skill':
+        return name.capitalizeWords() + (( per_level ) ? ' Per Level' : '');
+
+      case 'choice':
+        return 'Complicated rendering should go here';
+
+      default:
+        break;
+    }
+
+    return val;
+  } );
+
 };
 },{}],9:[function(require,module,exports){
-var Handlebars=require("handlebars"),template=Handlebars.template,templates=Handlebars.templates=Handlebars.templates||{};templates["choose-class"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-equipment"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-race-feature"]=template({1:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</strong><br>"+i((t=null!=(t=a.value||(null!=e?e.value:e))?t:r,typeof t===s?t.call(e,{name:"value",hash:{},data:l}):t))+"</p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.features||(null!=e?e.features:e))?s:o,r={name:"features",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.features||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race-trait"]=template({1:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((t=null!=(t=a["choose-race-trait-type"]||(null!=e?e["choose-race-trait-type"]:e))?t:r,typeof t===s?t.call(e,{name:"choose-race-trait-type",hash:{},data:l}):t))+"</strong><br>"+i((t=null!=(t=a.value||(null!=e?e.value:e))?t:r,typeof t===s?t.call(e,{name:"value",hash:{},data:l}):t))+"</p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return s=null!=(s=a.traits||(null!=e?e.traits:e))?s:o,r={name:"traits",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.traits||(t=c.call(e,t,r)),null!=t&&(u+=t),u},useData:!0}),templates["choose-race"]=template({1:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=this.escapeExpression,u=a.blockHelperMissing,p='            <optgroup label="'+c((s=null!=(s=a.name||(null!=e?e.name:e))?s:o,typeof s===i?s.call(e,{name:"name",hash:{},data:l}):s))+'">\n';return s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),s=null!=(s=a.subraces||(null!=e?e.subraces:e))?s:o,r={name:"subraces",hash:{},fn:this.noop,inverse:this.program(2,l),data:l},t=typeof s===i?s.call(e,r):s,a.subraces||(t=u.call(e,t,r)),null!=t&&(p+=t),p+"            </optgroup>\n"},2:function(e,a,n,l){var t,s="function",r=a.helperMissing,i=this.escapeExpression;return'                <option value="'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+'">'+i((t=null!=(t=a.name||(null!=e?e.name:e))?t:r,typeof t===s?t.call(e,{name:"name",hash:{},data:l}):t))+"</option>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var t,s,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u='<div class="row">\n  <div class="col-xs-6">\n    <form>\n      <select name="race" id="race" class="form-control">\n        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>\n        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">\n';return s=null!=(s=a.races||(null!=e?e.races:e))?s:o,r={name:"races",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},t=typeof s===i?s.call(e,r):s,a.races||(t=c.call(e,t,r)),null!=t&&(u+=t),u+'        </ul>\n      </select>\n    </form>\n  </div>\n  <div class="col-xs-6" id="race-description">\n    <div class="col-xs-12"><h4>Features</h4></div>\n    <div class="col-xs-12" id="race-features"></div>\n    <div class="col-xs-12"><h4>Traits</h4></div>\n    <div class="col-xs-12" id="race-traits"></div>\n  </div>\n</div>\n'},useData:!0}),templates["describe-character"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["determine-abilities"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.index=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.notfound=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0});
+var Handlebars=require("handlebars"),template=Handlebars.template,templates=Handlebars.templates=Handlebars.templates||{};templates["choose-class"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-equipment"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["choose-race-feature"]=template({1:function(e,a,n,l){var s,t="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p><strong class="feature-header">'+i((s=null!=(s=a.name||(null!=e?e.name:e))?s:r,typeof s===t?s.call(e,{name:"name",hash:{},data:l}):s))+"</strong><br>"+i((s=null!=(s=a.value||(null!=e?e.value:e))?s:r,typeof s===t?s.call(e,{name:"value",hash:{},data:l}):s))+"</p>\n  </div>\n</div>\n"},3:function(){return'<div class="row">\n  <div class="col-xs-12">\n    <p>None</p>\n  </div>\n</div>\n'},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var s,t,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return t=null!=(t=a.features||(null!=e?e.features:e))?t:o,r={name:"features",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},s=typeof t===i?t.call(e,r):t,a.features||(s=c.call(e,s,r)),null!=s&&(u+=s),t=null!=(t=a.features||(null!=e?e.features:e))?t:o,r={name:"features",hash:{},fn:this.noop,inverse:this.program(3,l),data:l},s=typeof t===i?t.call(e,r):t,a.features||(s=c.call(e,s,r)),null!=s&&(u+=s),u},useData:!0}),templates["choose-race-trait"]=template({1:function(e,a,n,l){var s,t,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return t=null!=(t=a["choose-race-trait-should-render"]||(null!=e?e["choose-race-trait-should-render"]:e))?t:o,r={name:"choose-race-trait-should-render",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},s=typeof t===i?t.call(e,r):t,a["choose-race-trait-should-render"]||(s=c.call(e,s,r)),null!=s&&(u+=s),u},2:function(e,a,n,l){var s,t="function",r=a.helperMissing,i=this.escapeExpression;return'<div class="row">\n  <div class="col-xs-12">\n    <p>\n      <strong class="feature-header">'+i((s=null!=(s=a["choose-race-trait-type"]||(null!=e?e["choose-race-trait-type"]:e))?s:r,typeof s===t?s.call(e,{name:"choose-race-trait-type",hash:{},data:l}):s))+"</strong> "+i((s=null!=(s=a["choose-race-trait-value"]||(null!=e?e["choose-race-trait-value"]:e))?s:r,typeof s===t?s.call(e,{name:"choose-race-trait-value",hash:{},data:l}):s))+"\n    </p>\n  </div>\n</div>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var s,t,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u="";return t=null!=(t=a.traits||(null!=e?e.traits:e))?t:o,r={name:"traits",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},s=typeof t===i?t.call(e,r):t,a.traits||(s=c.call(e,s,r)),null!=s&&(u+=s),u},useData:!0}),templates["choose-race"]=template({1:function(e,a,n,l){var s,t,r,i="function",o=a.helperMissing,c=this.escapeExpression,u=a.blockHelperMissing,p='            <optgroup label="'+c((t=null!=(t=a.name||(null!=e?e.name:e))?t:o,typeof t===i?t.call(e,{name:"name",hash:{},data:l}):t))+'">\n';return t=null!=(t=a.subraces||(null!=e?e.subraces:e))?t:o,r={name:"subraces",hash:{},fn:this.program(2,l),inverse:this.noop,data:l},s=typeof t===i?t.call(e,r):t,a.subraces||(s=u.call(e,s,r)),null!=s&&(p+=s),t=null!=(t=a.subraces||(null!=e?e.subraces:e))?t:o,r={name:"subraces",hash:{},fn:this.noop,inverse:this.program(2,l),data:l},s=typeof t===i?t.call(e,r):t,a.subraces||(s=u.call(e,s,r)),null!=s&&(p+=s),p+"            </optgroup>\n"},2:function(e,a,n,l){var s,t="function",r=a.helperMissing,i=this.escapeExpression;return'                <option value="'+i((s=null!=(s=a.name||(null!=e?e.name:e))?s:r,typeof s===t?s.call(e,{name:"name",hash:{},data:l}):s))+'">'+i((s=null!=(s=a.name||(null!=e?e.name:e))?s:r,typeof s===t?s.call(e,{name:"name",hash:{},data:l}):s))+"</option>\n"},compiler:[6,">= 2.0.0-beta.1"],main:function(e,a,n,l){var s,t,r,i="function",o=a.helperMissing,c=a.blockHelperMissing,u='<div class="row">\n  <div class="col-xs-6">\n    <form id="choose-race-form">\n      <select name="race" id="race" class="form-control">\n        <option disabled="disabled" selected="selected" value="-1">Choose a race</option>\n        <ul class="dropdown-menu" role="menu" aria-labelledby="race-dropdown">\n';return t=null!=(t=a.races||(null!=e?e.races:e))?t:o,r={name:"races",hash:{},fn:this.program(1,l),inverse:this.noop,data:l},s=typeof t===i?t.call(e,r):t,a.races||(s=c.call(e,s,r)),null!=s&&(u+=s),u+'        </ul>\n      </select>\n\n      <button type="submit" class="btn btn-default disabled" disabled="disabled">Next Step</button>\n    </form>\n  </div>\n  <div class="col-xs-6" id="race-description">\n    <div class="col-xs-12"><h4>Features</h4></div>\n    <div class="col-xs-12" id="race-features"></div>\n    <div class="col-xs-12"><h4>Traits</h4></div>\n    <div class="col-xs-12" id="race-traits"></div>\n  </div>\n</div>\n'},useData:!0}),templates["describe-character"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates["determine-abilities"]=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0}),templates.notfound=template({compiler:[6,">= 2.0.0-beta.1"],main:function(){return"\n"},useData:!0});
 },{"handlebars":27}],10:[function(require,module,exports){
 (function (global){
 

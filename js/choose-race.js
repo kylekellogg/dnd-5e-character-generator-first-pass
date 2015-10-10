@@ -2,6 +2,7 @@ module.exports = function chooseRace() {
   'use strict';
   var $ = require( 'jquery' ),
       Handlebars = require( 'handlebars' ),
+      page = require( 'page' ),
       self = this,
       data,
       featureTemplate,
@@ -9,7 +10,9 @@ module.exports = function chooseRace() {
       $race,
       $description,
       $features,
-      $traits;
+      $traits,
+      $chooseRaceForm,
+      $submit;
 
   function findFeaturesForRaceNamed( name ) {
     var matchesName = createMatchesName( name );
@@ -49,6 +52,9 @@ module.exports = function chooseRace() {
   }
 
   function onRaceChanged() {
+    $submit.removeAttr( 'disabled' );
+    $submit.removeClass( 'disabled' );
+    
     updateRace( $race.val() );
   }
 
@@ -132,9 +138,38 @@ module.exports = function chooseRace() {
       }
     } );
 
+    //  Sort by type
+    traits.sort( function( a, b ) {
+      var types = ['language', 'speed', 'appearance', 'ability_score_increase', 'skill', 'choice'];
+      var aval = types.indexOf( a.type );
+      var bval = types.indexOf( b.type );
+
+      if ( aval === -1 ) return 1;
+      if ( bval === -1 ) return -1;
+
+      //  0-0 = 0, 0-1 = -1 (before), 1-0 = 1 (after)
+      return aval - bval;
+    } );
+
     traitsObj.traits = traits || [];
 
     return traitsObj;
+  }
+
+  function onRaceSubmit( ctx ) {
+    return function( e ) {
+      console.log( 'Character was:', ctx.character );
+      ctx.character.traits = findTraitsForRaceNamed( $race.val() );
+      //  TODO: Filter traits to move appearance out into ctx.character.appearance
+      ctx.character.features = findFeaturesForRaceNamed( $race.val() );
+      console.log( 'Character is:', ctx.character );
+      ctx.save();
+
+      page( '/choose-class' );
+
+      e.preventDefault();
+      return false;
+    };
   }
 
   this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
@@ -159,6 +194,10 @@ module.exports = function chooseRace() {
       $description = $( '#race-description' );
       $features = $( '#race-features' );
       $traits = $( '#race-traits' );
+      $chooseRaceForm = $( '#choose-race-form' );
+      $submit = $chooseRaceForm.find( 'button[type=submit]' );
+
+      $chooseRaceForm.on( 'submit', onRaceSubmit(ctx) );
 
       $race.on( 'change', onRaceChanged );
     // } );
