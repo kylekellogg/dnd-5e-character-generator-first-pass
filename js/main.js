@@ -12,6 +12,7 @@
   var Handlebars = require( 'handlebars' );
   var helpers = require( './template.helpers.js' )( Handlebars );
   var templates = require( './templates.js' );
+  var Character = require( './character.js' );
   var bootstrap = require( 'bootstrap' );
 
   var race = new ChooseRace();
@@ -28,20 +29,23 @@
           template = Handlebars.templates[safePage];
 
       if ( ctx.character === undefined ) {
-        ctx.character = {};
+        ctx.character = new Character();
       }
 
       $.getJSON( 'data/' + safePage + '.json' )
         .done( function onDataDone( data ) {
           ctx.jsonData = data;
 
+          var tmp = template( data );
+
           //  Apply template
-          $main.html( template( data ) )
+          $main.html( tmp )
             .removeAttr( 'class' )
             .addClass( safePage );
 
           document.title = data.title || 'Character Generator for D&D 5e';
 
+          console.log( 'triggering', 'page.change.' + safePage );
           $document.trigger( 'page.change.' + safePage );
         } )
         .fail( function onDataFail() {
@@ -50,6 +54,9 @@
         } )
         .always( function onDataAlways() {
           ctx.save();
+
+          console.log( 'From main:', ctx.character );
+
           next();
         } );
     }

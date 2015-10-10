@@ -2,6 +2,7 @@ module.exports = function chooseRace() {
   'use strict';
   var $ = require( 'jquery' ),
       Handlebars = require( 'handlebars' ),
+      page = require( 'page' ),
       self = this,
       data,
       featureTemplate,
@@ -155,9 +156,20 @@ module.exports = function chooseRace() {
     return traitsObj;
   }
 
-  function onRaceSubmit( e ) {
-    e.preventDefault();
-    return false;
+  function onRaceSubmit( ctx ) {
+    return function( e ) {
+      console.log( 'Character was:', ctx.character );
+      ctx.character.traits = findTraitsForRaceNamed( $race.val() );
+      //  TODO: Filter traits to move appearance out into ctx.character.appearance
+      ctx.character.features = findFeaturesForRaceNamed( $race.val() );
+      console.log( 'Character is:', ctx.character );
+      ctx.save();
+
+      page( '/choose-class' );
+
+      e.preventDefault();
+      return false;
+    };
   }
 
   this.findFeaturesForRaceNamed = findFeaturesForRaceNamed;
@@ -185,7 +197,7 @@ module.exports = function chooseRace() {
       $chooseRaceForm = $( '#choose-race-form' );
       $submit = $chooseRaceForm.find( 'button[type=submit]' );
 
-      $chooseRaceForm.on( 'submit', onRaceSubmit );
+      $chooseRaceForm.on( 'submit', onRaceSubmit(ctx) );
 
       $race.on( 'change', onRaceChanged );
     // } );
