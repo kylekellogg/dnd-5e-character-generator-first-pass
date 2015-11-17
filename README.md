@@ -1,5 +1,7 @@
 # Character Generator for Dungeons and Dragons 5e (Fifth Edition)
 
+<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
 Character generator for Dungeons and Dragons 5e (fifth edition)
 
 ## Steps
