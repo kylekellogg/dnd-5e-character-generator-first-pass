@@ -22,4 +22,4 @@ The development and production environments are setup to use [node](http://nodej
 
 Run `npm run setup` to install dependencies.
 
-This is a test: <i aria-hidden="true" class="ion-social-octocat"></i>
+This is a test: <i aria-hidden="true" class="icon ion-social-octocat"></i>
