@@ -1,5 +1,5 @@
 # Character Generator for Dungeons and Dragons 5e (Fifth Edition)
-<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" media="all">
+
 Character generator for Dungeons and Dragons 5e (fifth edition)
 
 ## Steps
@@ -21,5 +21,3 @@ The development and production environments are setup to use [node](http://nodej
 ## Setup
 
 Run `npm run setup` to install dependencies.
-
-This is a test: <i aria-hidden="true" class="icon ion-social-octocat"></i>
